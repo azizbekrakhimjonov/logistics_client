@@ -532,6 +532,19 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                     ),
                     leftMenuButton(),
                     mapLocationText(),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 12, bottom: 8),
+                        child: FloatingActionButton(
+                          heroTag: "currentLocationBtn",
+                          mini: true,
+                          onPressed: () => getCurrentLocation(),
+                          child: const Icon(Icons.my_location),
+                        ),
+                      ),
+                    ),
+
                     BlocConsumer<MainBloc, MainState>(
                       listener: (context, state) {
                         if (state is MainLoadingState) {
@@ -584,6 +597,109 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
             ),
       drawer: MainDrawer(),
     );
+  }
+
+
+  Future<void> getCurrentLocation() async {
+    debugPrint("getCurrentLocation started");
+
+    const double fallbackLat = 41.3115743182368;
+    const double fallbackLong = 69.27959652630211;
+
+    try {
+      // Desktop platformalarda faqat Tashkent
+      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+        lat = fallbackLat;
+        long = fallbackLong;
+        _moveCameraTo(lat, long);
+        return;
+      }
+
+      // Mobil: ruxsatni tekshirish
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        debugPrint("Location permission denied, using Tashkent");
+        lat = fallbackLat;
+        long = fallbackLong;
+        _moveCameraTo(lat, long);
+        return;
+      }
+
+      // Haqiqiy joylashuvni olish
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
+      );
+
+      lat = position.latitude;
+      long = position.longitude;
+
+      debugPrint("Current location: $lat, $long");
+
+      _moveCameraTo(lat, long);
+    } catch (e) {
+      debugPrint("Location error: $e, fallback to Tashkent");
+      lat = fallbackLat;
+      long = fallbackLong;
+      _moveCameraTo(lat, long);
+    }
+  }
+
+// Yordamchi funksiya — kamerani to'g'ri joyga siljitish uchun
+  Future<void> _moveCameraTo(double latitude, double longitude) async {
+    setState(() {
+      cameraPosition = CameraPosition(
+        target: LatLng(latitude, longitude),
+        zoom: 15.5,
+      );
+    });
+
+    // Muhim: GoogleMap ni majburan yangi joyga siljitish
+    if (!isDesktop) {
+      try {
+        final GoogleMapController controller = await _controller.future;
+        await controller.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(latitude, longitude),
+              zoom: 15.5,
+            ),
+          ),
+        );
+      } catch (e) {
+        debugPrint("Controller error: $e");
+      }
+    } else {
+      // Desktop uchun flutter_map
+      _desktopMapController.move(latlng.LatLng(latitude, longitude), 15.0);
+    }
+
+    // Adresni yangilash
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        latitude,
+        longitude,
+        localeIdentifier: "uz_UZ",
+      );
+      if (placemarks.isNotEmpty) {
+        final place = placemarks.first;
+        textController.text = [
+          place.street,
+          place.subLocality,
+          place.locality,
+          place.administrativeArea,
+        ].where((e) => e != null && e.isNotEmpty).join(", ");
+      } else {
+        textController.text = "$latitude, $longitude";
+      }
+    } catch (e) {
+      textController.text = "$latitude, $longitude";
+    }
   }
 
 
