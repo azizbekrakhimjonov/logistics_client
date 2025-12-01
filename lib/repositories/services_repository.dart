@@ -55,7 +55,8 @@ class ServicesRepository {
           "lat": data.address.lat
         },
         "comment": data.comment,
-        "category_unit": data.categoryUnit
+        "category_unit": data.categoryUnit,
+        "service_type": data.serviceType
       };
       String token = await SharedPref().read('token') ?? '';
       print("RequestDATA: ${jsonData}");

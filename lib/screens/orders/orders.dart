@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -86,6 +84,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
   Widget orderItem({required History item}) {
     var categoryName = item.comment == null ? Services.translate(context.locale.toString(), item.categoryObj!.category.nameUz, item.categoryObj!.category.nameRu) : item.comment;
     var quantity = item.comment == null ? " ${item.categoryObj!.quantity} ${item.categoryObj!.unit}" : "";
+    var serviceTypeText = item.serviceType == 'material' ? 'I need a material' : 'I need a driver';
     return InkWell(
       onTap: () {
         Navigator.pushNamed(context, Routes.orderDetail, arguments: {"id": item.id});
@@ -131,6 +130,30 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
               ),
               Text(Services.getStatusString(item.status),
                   style: mediumBlack.copyWith(color: AppColor.primary)),
+            ],
+          ),
+          SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: item.serviceType == 'material' 
+                      ? AppColor.primary.withOpacity(0.1) 
+                      : AppColor.lightGreen.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  serviceTypeText,
+                  style: mediumBlack.copyWith(
+                    fontSize: 12,
+                    color: item.serviceType == 'material' 
+                        ? AppColor.primary 
+                        : AppColor.lightGreen,
+                  ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 10),

@@ -24,6 +24,7 @@ class History {
     final int user;
     final int categoryUnit;
     final int? driver;
+    final String serviceType;
 
     History({
         required this.id,
@@ -39,6 +40,7 @@ class History {
         required this.user,
         required this.categoryUnit,
         required this.driver,
+        this.serviceType = 'material',
     });
 
     factory History.fromJson(Map<String, dynamic> json) => History(
@@ -55,6 +57,7 @@ class History {
         user: json["user"] ?? 0,
         categoryUnit: json["category_unit"] ?? 0,
         driver: json["driver"] as int?,
+        serviceType: json["service_type"] ?? 'material',
     );
 
     Map<String, dynamic> toJson() => {
@@ -71,6 +74,7 @@ class History {
         "user": user,
         "category_unit": categoryUnit,
         "driver": driver,
+        "service_type": serviceType,
     };
 }
 

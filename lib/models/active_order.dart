@@ -23,6 +23,7 @@ class ActiveOrder {
     final int user;
     final int categoryUnit;
     final String? paymentUrl;
+    final String serviceType;
 
     ActiveOrder({
         required this.id,
@@ -39,6 +40,7 @@ class ActiveOrder {
         required this.user,
         required this.categoryUnit,
         this.paymentUrl,
+        this.serviceType = 'material',
     });
 
     factory ActiveOrder.fromJson(Map<String, dynamic> json) => ActiveOrder(
@@ -56,6 +58,7 @@ class ActiveOrder {
         user: json["user"] ?? 0,
         categoryUnit: json["category_unit"] ?? 0,
         paymentUrl: json["payment_url"],
+        serviceType: json["service_type"] ?? 'material',
     );
 
     Map<String, dynamic> toJson() => {
@@ -72,6 +75,7 @@ class ActiveOrder {
         "price": price,
         "user": user,
         "category_unit": categoryUnit,
+        "service_type": serviceType,
         if (paymentUrl != null) "payment_url": paymentUrl,
     };
 }

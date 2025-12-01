@@ -16,6 +16,7 @@ class Order {
     final DateTime updatedAt;
     final dynamic comment;
     final int? categoryUnit;
+    final String serviceType;
 
     Order({
         required this.id,
@@ -25,6 +26,7 @@ class Order {
         required this.updatedAt,
         required this.comment,
         required this.categoryUnit,
+        this.serviceType = 'material',
     });
 
     factory Order.fromJson(Map<String, dynamic> json) => Order(
@@ -35,6 +37,7 @@ class Order {
         updatedAt: DateTime.parse(json["updated_at"]),
         comment: json["comment"],
         categoryUnit: json["category_unit"] == null ? 0: json["category_unit"],
+        serviceType: json["service_type"] ?? 'material',
     );
 
     Map<String, dynamic> toJson() => {
@@ -45,6 +48,7 @@ class Order {
         "updated_at": updatedAt.toIso8601String(),
         "comment": comment ?? "",
         "category_unit": categoryUnit,
+        "service_type": serviceType,
     };
 }
 
@@ -71,20 +75,56 @@ class ProposedPrice {
 class Driver {
     final int id;
     final Car car;
+    final DriverUser? user;
 
     Driver({
         required this.id,
         required this.car,
+        this.user,
     });
 
     factory Driver.fromJson(Map<String, dynamic> json) => Driver(
         id: json["id"],
         car: Car.fromJson(json["car"]),
+        user: json["user"] != null ? DriverUser.fromJson(json["user"]) : null,
     );
 
     Map<String, dynamic> toJson() => {
         "id": id,
         "car": car.toJson(),
+        if (user != null) "user": user!.toJson(),
+    };
+}
+
+class DriverUser {
+    final int id;
+    final String? username;
+    final String? name;
+    final String? picCompress;
+    final String? url;
+
+    DriverUser({
+        required this.id,
+        this.username,
+        this.name,
+        this.picCompress,
+        this.url,
+    });
+
+    factory DriverUser.fromJson(Map<String, dynamic> json) => DriverUser(
+        id: json["id"],
+        username: json["username"],
+        name: json["name"],
+        picCompress: json["pic_compress"],
+        url: json["url"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        if (username != null) "username": username,
+        if (name != null) "name": name,
+        if (picCompress != null) "pic_compress": picCompress,
+        if (url != null) "url": url,
     };
 }
 

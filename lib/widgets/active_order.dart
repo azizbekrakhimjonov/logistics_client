@@ -16,6 +16,7 @@ class ActiveOrderContainer extends StatelessWidget {
     var categoryName = order.comment == null ? Services.translate(context.locale.toString(), order.categoryObj!.category.nameUz, order.categoryObj!.category.nameRu) : order.comment;
     var quantity = order.comment == null ? " ${order.categoryObj!.quantity} ${order.categoryObj!.unit}" : "";
     var image = order.driver?.user.picCompress;
+    var serviceTypeText = order.serviceType == 'material' ? 'I need a material' : 'I need a driver';
     return Positioned(
       bottom: MediaQuery.of(context).viewPadding.bottom + 30,
       left: 24,
@@ -111,6 +112,31 @@ class ActiveOrderContainer extends StatelessWidget {
                     ),
                   ],
                 )
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: order.serviceType == 'material' 
+                        ? AppColor.primary.withOpacity(0.1) 
+                        : AppColor.lightGreen.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    serviceTypeText,
+                    style: mediumBlack.copyWith(
+                      fontSize: 12,
+                      color: order.serviceType == 'material' 
+                          ? AppColor.primary 
+                          : AppColor.lightGreen,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

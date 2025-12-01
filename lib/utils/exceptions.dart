@@ -33,6 +33,9 @@ class DioExceptions implements Exception {
       case DioExceptionType.sendTimeout:
         message = "Send timeout in connection with API server";
         break;
+      case DioExceptionType.connectionError:
+        message = "Connection error: CORS policy may be blocking the request. Please check if the server allows requests from this origin.";
+        break;
       default:
         message = "Something went wrong - ${dioError.type}";
         break;

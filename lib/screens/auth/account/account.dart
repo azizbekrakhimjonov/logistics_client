@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' if (dart.library.html) 'dart:html' as io;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
@@ -333,7 +333,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
         ) as ImageProvider;
       }
     } else {
-      return FileImage(File(imageFile!.path)) as ImageProvider;
+      return FileImage(io.File(imageFile!.path)) as ImageProvider;
     }
   }
 

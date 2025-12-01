@@ -37,6 +37,7 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
   final OrderBloc _bloc = OrderBloc();
   dynamic args;
   var orderList = [];
+  Order? _currentOrderData; // Store current order data
 
   void _openDetailSheet() {
     setState(() {
@@ -138,6 +139,7 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
                   if (state is OrderSuccessState) {
                     setState(() {
                       orderList = state.data.proposedPrices;
+                      _currentOrderData = state.data; // Store order data
                     });
                   }
                   if (state is OrderErrorState) {
@@ -232,6 +234,7 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
         closeSheet: () => _closeDetailSheet(),
         item: item,
         activeIndex: activeIndex,
+        orderData: _currentOrderData, // Pass stored order data
         onDone: () {
           _openPaymentSheet();
           _closeDetailSheet();

@@ -15,6 +15,7 @@ class Detail extends StatelessWidget {
   // final Function selectItem;
   final int activeIndex;
   final Function onDone;
+  final Order? orderData; // Add order data to show order details
   const Detail({
     super.key,
     required this.sheet,
@@ -23,6 +24,7 @@ class Detail extends StatelessWidget {
     // required this.selectItem,
     required this.activeIndex,
     required this.onDone,
+    this.orderData,
   });
 
   @override
@@ -40,11 +42,10 @@ class Detail extends StatelessWidget {
         ]),
         child: DraggableScrollableSheet(
           key: sheet,
-          initialChildSize: 0.5,
-          minChildSize: 0.5,
-          maxChildSize: 0.7,
-          snap: true,
-          snapSizes: const [0.7],
+          initialChildSize: 0.75,
+          minChildSize: 0.7,
+          maxChildSize: 0.9,
+          snap: false,
           builder: (BuildContext context, ScrollController scrollController) {
             return DecoratedBox(
               decoration: const BoxDecoration(
@@ -60,74 +61,232 @@ class Detail extends StatelessWidget {
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(16)),
                   ),
-                  // padding: EdgeInsets.symmetric(horizontal: 35, vertical: 25),
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // SizedBox(height: 5),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                                onPressed: () {
-                                  closeSheet();
-                                },
-                                icon: const Icon(Icons.close)),
-                          ],
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Drag handle
+                      Container(
+                        margin: EdgeInsets.only(top: 12, bottom: 8),
+                        width: 60,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: AppColor.secondaryText.withOpacity(0.3),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      ),
+                      // Close button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                closeSheet();
+                              },
+                              icon: const Icon(Icons.close)),
+                        ],
+                      ),
+                      // Content - No scrolling, fit all content
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            circleAvatar(),
-                            SizedBox(width: 16),
-                            Column(
+                        // Header Title
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Text(
+                            "Taklif ma'lumotlari",
+                            style: boldBlack.copyWith(fontSize: 18),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Driver Information Card
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          padding: EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: AppColor.grayBackground,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  circleAvatar(),
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Haydovchi",
+                                          style: regularText.copyWith(
+                                            fontSize: 11,
+                                            color: AppColor.secondaryText,
+                                          ),
+                                        ),
+                                        SizedBox(height: 3),
+                                        Text(
+                                          item.driver.user?.name ?? "Haydovchi",
+                                          style: mediumBlack.copyWith(fontSize: 16),
+                                        ),
+                                        if (item.driver.user?.username != null) ...[
+                                          SizedBox(height: 3),
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.phone,
+                                                size: 12,
+                                                color: AppColor.secondaryText,
+                                              ),
+                                              SizedBox(width: 4),
+                                              Flexible(
+                                                child: Text(
+                                                  item.driver.user!.username!,
+                                                  style: regularText.copyWith(
+                                                    fontSize: 11,
+                                                    color: AppColor.secondaryText,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 12),
+                              Divider(color: AppColor.secondaryText.withOpacity(0.2)),
+                              SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.local_shipping,
+                                    size: 16,
+                                    color: AppColor.primary,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Transport vositası",
+                                          style: regularText.copyWith(
+                                            fontSize: 11,
+                                            color: AppColor.secondaryText,
+                                          ),
+                                        ),
+                                        SizedBox(height: 3),
+                                        Text(
+                                          item.driver.car.nameUz.isNotEmpty 
+                                              ? item.driver.car.nameUz 
+                                              : item.driver.car.nameRu,
+                                          style: mediumBlack.copyWith(fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        // Order Details Card (if available)
+                        if (orderData != null) ...[
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 20),
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColor.grayBackground,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Абдулла", style: mediumBlack),
-                                SizedBox(height: 5),
-                                Row(
-                                  children: [
-                                    SvgPicture.asset(AssetImages.star),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      "4.9",
-                                      style: mediumBlack.copyWith(
-                                          color: AppColor.secondaryText),
-                                    )
-                                  ],
-                                )
+                                Text(
+                                  "Buyurtma ma'lumotlari",
+                                  style: mediumBlack.copyWith(fontSize: 14),
+                                ),
+                                SizedBox(height: 10),
+                                if (orderData!.comment != null && orderData!.comment.toString().isNotEmpty)
+                                  _buildInfoRow(
+                                    Icons.description,
+                                    "Izoh",
+                                    orderData!.comment.toString(),
+                                  ),
+                                if (orderData!.serviceType.isNotEmpty)
+                                  _buildInfoRow(
+                                    orderData!.serviceType == 'material' 
+                                        ? Icons.inventory_2 
+                                        : Icons.person,
+                                    "Xizmat turi",
+                                    orderData!.serviceType == 'material' 
+                                        ? "Material kerak" 
+                                        : "Haydovchi kerak",
+                                  ),
                               ],
-                            )
-                          ],
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                        ],
+                        // Proposed Price Section
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+                          decoration: BoxDecoration(
+                            color: AppColor.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: AppColor.primary.withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                "Taklif qilingan narx",
+                                style: regularText.copyWith(
+                                  fontSize: 12,
+                                  color: AppColor.secondaryText,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 6),
+                              Text(
+                                "${_formatPrice(item.price)} " + "sum".tr(),
+                                style: boldBlack.copyWith(
+                                  fontSize: 26,
+                                  color: AppColor.primary,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 35),
-                        Text("${item.price} " + "sum".tr(),
-                            style: mediumBlack.copyWith(fontSize: 30),
-                            textAlign: TextAlign.center),
-                        const SizedBox(height: 20),
-                        // rowText("Sement", "6 880 000so‘m"),
-                        // rowText("Yuk tashish mashinasi", "120 000so‘m"),
-                        // const SizedBox(height: 25),
-
-                        const SizedBox(height: 35),
-                        DefaultButton(
-                          disable: false,
-                          title: "Оплата",
-                          onPress: () {
-                            onDone();
-                            // if (activeIndex != 0) {
-                            //   Navigator.pushNamed(
-                            //       context, Routes.vehiclechoose);
-                            //   _closeCapacitySheet();
-                            //   _closeSheet();
-                            // }
-                          },
-                        )
-                      ],
-                    ),
-                  )),
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: DefaultButton(
+                            disable: false,
+                            title: "Оплата",
+                            onPress: () {
+                              onDone();
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                  ),
             );
           },
         ),
@@ -149,37 +308,90 @@ class Detail extends StatelessWidget {
   }
 
   Widget circleAvatar() {
+    String? imageUrl;
+    if (item.driver.user?.picCompress != null && item.driver.user!.picCompress!.isNotEmpty) {
+      // If pic_compress is a relative URL, prepend base URL
+      imageUrl = item.driver.user!.picCompress!.startsWith('http')
+          ? item.driver.user!.picCompress!
+          : "https://airvive.coded.uz${item.driver.user!.picCompress!}";
+    } else {
+      imageUrl = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+    }
+    
     return Container(
-      width: 55, // Adjust the width and height as per your requirement
-      height: 55,
+      width: 60,
+      height: 60,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
           color: AppColor.primary,
-          width: 3.0,
+          width: 2.0,
         ),
       ),
       child: ClipOval(
         child: CachedNetworkImage(
-                imageUrl:
-                    "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-                progressIndicatorBuilder: (context, url, downloadProgress) =>
-                    CupertinoActivityIndicator(),
-                    // CircularProgressIndicator(value: downloadProgress.progress),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-              ),
-        // Image.network(
-        //   "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-        //   fit: BoxFit.cover,
-        //   errorBuilder: (context, url, error) => Image.asset(
-        //           AssetImages.defaultImage,
-        //           height: 55,
-        //           width: 55,
-        //           fit: BoxFit.fill
-                  
-        //         ),
-        // ),
+          imageUrl: imageUrl,
+          progressIndicatorBuilder: (context, url, downloadProgress) =>
+              CupertinoActivityIndicator(),
+          errorWidget: (context, url, error) => Container(
+            color: AppColor.grayBackground,
+            child: Icon(
+              Icons.person,
+              color: AppColor.primary,
+              size: 35,
+            ),
+          ),
+          fit: BoxFit.cover,
+        ),
       ),
     );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: AppColor.secondaryText),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: regularText.copyWith(
+                    fontSize: 12,
+                    color: AppColor.secondaryText,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  value,
+                  style: mediumBlack.copyWith(fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatPrice(int price) {
+    // Format price with spaces for thousands
+    String priceStr = price.toString();
+    String formatted = '';
+    int count = 0;
+    for (int i = priceStr.length - 1; i >= 0; i--) {
+      if (count == 3) {
+        formatted = ' ' + formatted;
+        count = 0;
+      }
+      formatted = priceStr[i] + formatted;
+      count++;
+    }
+    return formatted;
   }
 }

@@ -71,7 +71,7 @@ class DraggableMapLocation extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: (address as List<MyAddress>)
                                 .map((e) => InkWell(
-                                  onTap: () => setLocation(e.id,e.long,e.lat),
+                                  onTap: () => setLocation(e.id, e.long, e.lat, e.name),
                                   child: Container(
                                         padding: EdgeInsets.symmetric(vertical: 10,horizontal: 15),
                                         margin: EdgeInsets.symmetric(horizontal: 5,vertical: 15),

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:io' if (dart.library.html) 'dart:html' as io;
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
@@ -61,7 +61,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             LoginFailState(message: "Xatolik sodir bo'ldi. ${e.statusCode}"),
           );
         }
-      } else if (e is DioError && e.error is SocketException) {
+      } else if (e is DioException && (e.type == DioExceptionType.connectionError || e.type == DioExceptionType.unknown)) {
         emit(const LoginFailState(message: "Internet bilan bog'liq xatolik"));
       } else {
         emit(LoginFailState(message: "$e"));
@@ -95,7 +95,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             LoginFailState(message: "Xatolik sodir bo'ldi. ${e.statusCode}"),
           );
         }
-      } else if (e is DioError && e.error is SocketException) {
+      } else if (e is DioException && (e.type == DioExceptionType.connectionError || e.type == DioExceptionType.unknown)) {
         emit(const LoginFailState(message: "Internet bilan bog'liq xatolik"));
       } else {
         emit(LoginFailState(message: "$e"));

@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' if (dart.library.html) 'dart:html' as io;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -72,8 +73,13 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
   bool dialogShown = false;
   int selectedAddressId = 0;
   List<dynamic> categories = [];
+  String selectedServiceType = 'material'; // Store selected service type
+  String? _selectedAddressName; // Store the selected address name to prevent geocoding override
 
-  bool get isDesktop => Platform.isLinux || Platform.isWindows || Platform.isMacOS;
+  bool get isDesktop {
+    if (kIsWeb) return false;
+    return io.Platform.isLinux || io.Platform.isWindows || io.Platform.isMacOS;
+  }
   am.ActiveOrder? _overrideOrderToShow;
   Timer? _refreshTimer;
   am.ActiveOrder? _currentOrder;
@@ -100,8 +106,9 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
       final candidates = list
           .where((e) {
             final s = e.status.toLowerCase();
-            const finished = {'completed','cancelled','refunded','delivered'};
-            return s != 'payment_confirm' && !finished.contains(s) && e.isActive;
+            const finished = {'completed','cancelled','refunded','delivered', 'rated'};
+            // Include pending, payment_confirm, and other active statuses
+            return !finished.contains(s) && e.isActive;
           })
           .toList()
         ..sort((a,b)=> b.updatedAt.compareTo(a.updatedAt));
@@ -195,8 +202,8 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
 
  
   void _listenForPermission() async {
-    // Skip permission checks on desktop platforms
-    if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+    // Skip permission checks on desktop platforms and web
+    if (kIsWeb || (!kIsWeb && (io.Platform.isLinux || io.Platform.isWindows || io.Platform.isMacOS))) {
       setState(() {
         permissionStatus = PermissionStatus.granted;
       });
@@ -255,6 +262,13 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
   }
 
   @override
+  void didPush() {
+    // Screen was pushed onto the stack, refresh data
+    _bloc.add(GetUser());
+    super.didPush();
+  }
+
+  @override
   void didChangeDependencies() async {
     final route = ModalRoute.of(context);
     if (route is PageRoute) {
@@ -300,9 +314,12 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
       zoom: 12.4746,
     );
     
-    // Try to get current location, fallback to default if on desktop
+    double finalLat = 41.3115743182368;
+    double finalLong = 69.27959652630211;
+    
+    // Try to get current location, fallback to default if on desktop or web
     try {
-      if (Platform.isAndroid || Platform.isIOS) {
+      if (!kIsWeb && (io.Platform.isAndroid || io.Platform.isIOS)) {
         Position position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high);
         setState(() {
@@ -312,9 +329,11 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
           );
           lat = position.latitude;
           long = position.longitude;
+          finalLat = position.latitude;
+          finalLong = position.longitude;
         });
       } else {
-        // For desktop, use default location
+        // For desktop and web, use default location
         setState(() {
           cameraPosition = defaultPosition;
           lat = 41.3115743182368;
@@ -329,6 +348,34 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
         lat = 41.3115743182368;
         long = 69.27959652630211;
       });
+    }
+    
+    // Geocode the address after setting location
+    if (_selectedAddressName == null) {
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          finalLat,
+          finalLong,
+          localeIdentifier: "uz_UZ",
+        );
+        if (placemarks.isNotEmpty) {
+          final place = placemarks.first;
+          final addressText = [
+            place.street,
+            place.subLocality,
+            place.locality,
+            place.administrativeArea,
+          ].where((e) => e != null && e.isNotEmpty).join(", ");
+          if (addressText.isNotEmpty) {
+            setState(() {
+              textController.text = addressText;
+              _selectedAddressName = addressText;
+            });
+          }
+        }
+      } catch (e) {
+        print("Geocoding error in getLocation: $e");
+      }
     }
     
     debugPrint("USER: ${user}");
@@ -444,18 +491,36 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                                   onPositionChanged: (position, hasGesture) async {
                                     if (hasGesture == true) {
                                       mapPickerController.mapMoving!();
+                                      // User is manually moving the map, clear saved address name
+                                      _selectedAddressName = null;
                                       textController.text = "checking ...";
                                       _desktopMoveDebounce?.cancel();
                                       _desktopMoveDebounce = Timer(const Duration(milliseconds: 600), () async {
                                         mapPickerController.mapFinishedMoving!();
                                         try {
-                                          final place = await placemarkFromCoordinates(lat, long, localeIdentifier: "uz");
-                                          if (place.isNotEmpty) {
-                                            textController.text = '${place.first.name}, ${place.first.street}, ${place.first.administrativeArea}';
+                                          final placemarks = await placemarkFromCoordinates(lat, long, localeIdentifier: "uz_UZ");
+                                          if (placemarks.isNotEmpty) {
+                                            final place = placemarks.first;
+                                            final addressText = [
+                                              place.street,
+                                              place.subLocality,
+                                              place.locality,
+                                              place.administrativeArea,
+                                            ].where((e) => e != null && e.isNotEmpty).join(", ");
+                                            if (addressText.isNotEmpty) {
+                                              textController.text = addressText;
+                                              _selectedAddressName = addressText;
+                                            } else {
+                                              // Fallback to name if other fields are empty
+                                              final fallbackText = place.name ?? place.thoroughfare ?? "$lat, $long";
+                                              textController.text = fallbackText;
+                                              _selectedAddressName = fallbackText != "$lat, $long" ? fallbackText : null;
+                                            }
                                           } else {
                                             textController.text = "$lat, $long";
                                           }
                                         } catch (e) {
+                                          print("Geocoding error in onPositionChanged: $e");
                                           textController.text = "$lat, $long";
                                         }
                                       });
@@ -467,15 +532,37 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                                     }
                                   },
                                   onMapReady: () async {
-                                    try {
-                                      final place = await placemarkFromCoordinates(lat, long, localeIdentifier: "uz");
-                                      if (place.isNotEmpty) {
-                                        textController.text = '${place.first.name}, ${place.first.street}, ${place.first.administrativeArea}';
-                                      } else {
+                                    // Only geocode on map ready if we don't have a saved address name
+                                    if (_selectedAddressName == null) {
+                                      try {
+                                        final placemarks = await placemarkFromCoordinates(lat, long, localeIdentifier: "uz_UZ");
+                                        if (placemarks.isNotEmpty) {
+                                          final place = placemarks.first;
+                                          final addressText = [
+                                            place.street,
+                                            place.subLocality,
+                                            place.locality,
+                                            place.administrativeArea,
+                                          ].where((e) => e != null && e.isNotEmpty).join(", ");
+                                          if (addressText.isNotEmpty) {
+                                            textController.text = addressText;
+                                            _selectedAddressName = addressText;
+                                          } else {
+                                            // Fallback to name if other fields are empty
+                                            final fallbackText = place.name ?? place.thoroughfare ?? "$lat, $long";
+                                            textController.text = fallbackText;
+                                            _selectedAddressName = fallbackText != "$lat, $long" ? fallbackText : null;
+                                          }
+                                        } else {
+                                          textController.text = "$lat, $long";
+                                        }
+                                      } catch (e) {
+                                        print("Geocoding error in onMapReady: $e");
                                         textController.text = "$lat, $long";
                                       }
-                                    } catch (e) {
-                                      textController.text = "$lat, $long";
+                                    } else {
+                                      // Restore the saved address name
+                                      textController.text = _selectedAddressName!;
                                     }
                                   },
                                   interactionOptions: const fm.InteractionOptions(enableScrollWheel: true),
@@ -510,21 +597,41 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                                 },
                                 onCameraIdle: () async {
                                   mapPickerController.mapFinishedMoving!();
-                                  try {
-                                    List<Placemark> placemarks =
-                                        await placemarkFromCoordinates(
-                                            cameraPosition!.target.latitude,
-                                            cameraPosition!.target.longitude,
-                                            localeIdentifier: "uz");
-                                    if (placemarks.isNotEmpty) {
-                                      textController.text =
-                                          '${placemarks.first.name}, ${placemarks.first.street}, ${placemarks.first.administrativeArea}';
-                                    } else {
+                                  // Only geocode if we don't have a saved address name (user manually moved map)
+                                  if (_selectedAddressName == null) {
+                                    try {
+                                      List<Placemark> placemarks =
+                                          await placemarkFromCoordinates(
+                                              cameraPosition!.target.latitude,
+                                              cameraPosition!.target.longitude,
+                                              localeIdentifier: "uz_UZ");
+                                      if (placemarks.isNotEmpty) {
+                                        final place = placemarks.first;
+                                        final addressText = [
+                                          place.street,
+                                          place.subLocality,
+                                          place.locality,
+                                          place.administrativeArea,
+                                        ].where((e) => e != null && e.isNotEmpty).join(", ");
+                                        if (addressText.isNotEmpty) {
+                                          textController.text = addressText;
+                                          _selectedAddressName = addressText;
+                                        } else {
+                                          // Fallback to name if other fields are empty
+                                          final fallbackText = place.name ?? place.thoroughfare ?? "${cameraPosition!.target.latitude}, ${cameraPosition!.target.longitude}";
+                                          textController.text = fallbackText;
+                                          _selectedAddressName = fallbackText != "${cameraPosition!.target.latitude}, ${cameraPosition!.target.longitude}" ? fallbackText : null;
+                                        }
+                                      } else {
+                                        textController.text = "${cameraPosition!.target.latitude}, ${cameraPosition!.target.longitude}";
+                                      }
+                                    } catch (e) {
+                                      print("Geocoding error: $e");
                                       textController.text = "${cameraPosition!.target.latitude}, ${cameraPosition!.target.longitude}";
                                     }
-                                  } catch (e) {
-                                    print("Geocoding error: $e");
-                                    textController.text = "${cameraPosition!.target.latitude}, ${cameraPosition!.target.longitude}";
+                                  } else {
+                                    // Restore the saved address name (from saved address selection)
+                                    textController.text = _selectedAddressName!;
                                   }
                                 },
                               ),
@@ -563,11 +670,17 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                           if (_hasActiveOrder && _currentOrder != null) {
                             return ActiveOrderContainer(order: _currentOrder!);
                           }
+                          // If backend says there's an order, wait for _ensureCurrentActiveOrder to load it
                           // Otherwise, only prompt for unfinished preorder when there is truly no active order
-                          if ((state.data.order == 0 || state.data.order == null)) {
+                          if ((state.data.order == 0 || state.data.order == null) && !_hasActiveOrder) {
                             if (preOrderId != 0 && dialogShown == false) {
                               _showMyDialog();
                             }
+                            return scrollableMapSelection(state);
+                          }
+                          // If there's an order but we haven't loaded it yet, show loading or wait
+                          if ((state.data.order ?? 0) != 0 && !_hasActiveOrder) {
+                            // Order exists but not loaded yet, wait a bit for _ensureCurrentActiveOrder
                             return scrollableMapSelection(state);
                           }
                         }
@@ -607,8 +720,8 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
     const double fallbackLong = 69.27959652630211;
 
     try {
-      // Desktop platformalarda faqat Tashkent
-      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      // Desktop and web platformalarda faqat Tashkent
+      if (kIsWeb || (!kIsWeb && (io.Platform.isWindows || io.Platform.isLinux || io.Platform.isMacOS))) {
         lat = fallbackLat;
         long = fallbackLong;
         _moveCameraTo(lat, long);
@@ -679,26 +792,33 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
       _desktopMapController.move(latlng.LatLng(latitude, longitude), 15.0);
     }
 
-    // Adresni yangilash
-    try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        latitude,
-        longitude,
-        localeIdentifier: "uz_UZ",
-      );
-      if (placemarks.isNotEmpty) {
-        final place = placemarks.first;
-        textController.text = [
-          place.street,
-          place.subLocality,
-          place.locality,
-          place.administrativeArea,
-        ].where((e) => e != null && e.isNotEmpty).join(", ");
-      } else {
+    // Adresni yangilash - only if we don't have a saved address name
+    if (_selectedAddressName == null) {
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          latitude,
+          longitude,
+          localeIdentifier: "uz_UZ",
+        );
+        if (placemarks.isNotEmpty) {
+          final place = placemarks.first;
+          final addressText = [
+            place.street,
+            place.subLocality,
+            place.locality,
+            place.administrativeArea,
+          ].where((e) => e != null && e.isNotEmpty).join(", ");
+          textController.text = addressText;
+          _selectedAddressName = addressText;
+        } else {
+          textController.text = "$latitude, $longitude";
+        }
+      } catch (e) {
         textController.text = "$latitude, $longitude";
       }
-    } catch (e) {
-      textController.text = "$latitude, $longitude";
+    } else {
+      // Restore the saved address name
+      textController.text = _selectedAddressName!;
     }
   }
 
@@ -749,15 +869,35 @@ void clearData() {
     return DraggableMapLocation(
       address: state is MainSuccessState ? state.data.user.myAddresses : [],
       sheet: _sheet,
-      setLocation: (id, longitude, latitude) =>
-          _setLocation(id, longitude, latitude),
-      openSheet: () => showCustomLuggagesBottomSheet(context), //_openSheet(),
+      setLocation: (id, longitude, latitude, addressName) =>
+          _setLocation(id, longitude, latitude, addressName),
+      openSheet: () => _showServiceTypeDialog(context), //_openSheet(),
       textController: textController,
       size: MediaQuery.of(context).size.width * 0.7,
     );
   }
 
-  Future<void> _setLocation(id, longitude, latitude) async {
+  void _showServiceTypeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ServiceTypeDialog(
+          onSelected: (String serviceType) {
+            setState(() {
+              selectedServiceType = serviceType;
+            });
+            // For now, both options proceed to material selection
+            // You can add different logic for 'driver' later
+            if (serviceType == 'material' || serviceType == 'driver') {
+              showCustomLuggagesBottomSheet(context);
+            }
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _setLocation(id, longitude, latitude, [String? addressName]) async {
     print("long: ${longitude} lat: ${latitude}");
     selectedAddressId = id;
     lat = latitude;
@@ -766,18 +906,46 @@ void clearData() {
       target: LatLng(lat, long), //LatLng(41.311158, 69.279737),
       zoom: 14.4746,
     );
-    if (isDesktop) {
-      _desktopMapController.move(latlng.LatLng(lat, long), 14);
+    
+    // Use the provided address name if available, otherwise try to geocode
+    if (addressName != null && addressName.isNotEmpty) {
+      _selectedAddressName = addressName; // Store the address name
+      textController.text = addressName;
+    } else {
+      _selectedAddressName = null; // Clear stored address name
+      // Fallback to geocoding if address name not provided
       try {
-        List<Placemark> placemarks = await placemarkFromCoordinates(lat, long, localeIdentifier: "uz");
+        List<Placemark> placemarks = await placemarkFromCoordinates(lat, long, localeIdentifier: "uz_UZ");
         if (placemarks.isNotEmpty) {
-          textController.text = '${placemarks.first.name}, ${placemarks.first.street}, ${placemarks.first.administrativeArea}';
+          final place = placemarks.first;
+          final addressText = [
+            place.street,
+            place.subLocality,
+            place.locality,
+            place.administrativeArea,
+          ].where((e) => e != null && e.isNotEmpty).join(", ");
+          if (addressText.isNotEmpty) {
+            textController.text = addressText;
+            _selectedAddressName = addressText; // Store geocoded address
+          } else {
+            // Fallback to name if other fields are empty
+            final fallbackText = place.name ?? place.thoroughfare ?? "$lat, $long";
+            textController.text = fallbackText;
+            _selectedAddressName = fallbackText != "$lat, $long" ? fallbackText : null;
+          }
         } else {
           textController.text = "$lat, $long";
+          _selectedAddressName = null;
         }
-      } catch (_) {
+      } catch (e) {
+        print("Geocoding error in _setLocation: $e");
         textController.text = "$lat, $long";
+        _selectedAddressName = null;
       }
+    }
+    
+    if (isDesktop) {
+      _desktopMapController.move(latlng.LatLng(lat, long), 14);
     } else {
       final GoogleMapController controller = await _controller.future;
       await controller.animateCamera(
@@ -876,7 +1044,8 @@ void clearData() {
                     long: long,
                     lat: lat),
                 comment: "",
-                categoryUnit: activeIndex);
+                categoryUnit: activeIndex,
+                serviceType: selectedServiceType);
             print("PREORDER: ${dto.toJson()}");
             _bloc.add(PreOrderEvent(data: dto));
               selectedProduct = null;
@@ -931,7 +1100,8 @@ void clearData() {
                   long: long,
                   lat: lat),
               comment: comment,
-              categoryUnit: null);
+              categoryUnit: null,
+              serviceType: selectedServiceType);
           print("PREORDER: ${dto.toJson()}");
           _bloc.add(PreOrderEvent(data: dto));
               selectedProduct = null;

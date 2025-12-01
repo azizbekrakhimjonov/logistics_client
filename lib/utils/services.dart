@@ -57,11 +57,17 @@ static String? moneyFormat(String price) {
   // }
 
   static String getStatusString(String status) {
-  switch (status) {
+  switch (status.toLowerCase()) {
     case "pending":
       return 'Ожидание оплаты';
     case "payment_confirm":
       return 'Оплата подтверждена';
+    case "truck_on_the_way":
+      return 'Грузовик в пути';
+    case "loading_delivery":
+      return 'Загрузка доставки';
+    case "loaded":
+      return 'Загружено';
     case "order_confirm":
       return 'Заказ подтвержден';
     case "processing":
@@ -82,6 +88,8 @@ static String? moneyFormat(String price) {
       return 'Возврат средств';
     case "completed":
       return 'Завершено';
+    case "rated":
+      return 'Оценен';
     case "pending_review":
       return 'Ожидает обзора';
     default:

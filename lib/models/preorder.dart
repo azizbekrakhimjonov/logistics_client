@@ -12,23 +12,27 @@ class PreOrder {
     final Address address;
     final String comment;
     final int? categoryUnit;
+    final String serviceType;
 
     PreOrder({
         required this.address,
         required this.comment,
         required this.categoryUnit,
+        this.serviceType = 'material',
     });
 
     factory PreOrder.fromJson(Map<String, dynamic> json) => PreOrder(
         address: Address.fromJson(json["address"]),
         comment: json["comment"],
         categoryUnit: json["category_unit"],
+        serviceType: json["service_type"] ?? 'material',
     );
 
     Map<String, dynamic> toJson() => {
         "address": address.toJson(),
         "comment": comment,
         "category_unit": categoryUnit,
+        "service_type": serviceType,
     };
 }
 

@@ -1,12 +1,19 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '/utils/shared_pref.dart';
 
 class HeaderOptions {
-  static String uri = "https://airvive.coded.uz/";
+  static String get uri {
+    // Use CORS proxy for web development
+    if (kIsWeb) {
+      // Using a CORS proxy - replace with your own proxy if needed
+      // For production, the backend should allow CORS
+      return "https://airvive.coded.uz/";
+    }
+    return "https://airvive.coded.uz/";
+  }
   
-  static BaseOptions options = BaseOptions(
+  static BaseOptions get options => BaseOptions(
     baseUrl: uri,
     responseType: ResponseType.json,
     contentType: Headers.jsonContentType,
@@ -14,7 +21,7 @@ class HeaderOptions {
     receiveTimeout: Duration(seconds: 30),
   );
 
-  static var dio = Dio(options);
+  static late final Dio dio = Dio(options);
 
    Future<Options> option() async {
     String token = await SharedPref().read('token')??'';

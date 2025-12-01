@@ -76,8 +76,9 @@ class _PaymentTypeState extends State<PaymentType> {
       Services.showSnackBar(context, "Buyurtma muvaffaqiyatli yaratildi", AppColor.primary);
       widget.closeSheet();
       
-      // Navigate back to main and refresh via RouteObserver in MainScreen
-      NavigationService.instance.navigateToReplacement(Routes.mainScreen);
+      // Navigate back to main screen - it will refresh automatically via initState
+      // Use pushReplacement to ensure MainScreen refreshes
+      Navigator.of(context).pushReplacementNamed(Routes.mainScreen);
       
     } catch (e) {
       setState(() {
@@ -141,9 +142,27 @@ class _PaymentTypeState extends State<PaymentType> {
                                 icon: const Icon(Icons.close)),
                           ],
                         ),
-                         Text("Tulov usullari",
-                            style: mediumBlack.copyWith(fontSize: 17),
-                            textAlign: TextAlign.center),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Column(
+                            children: [
+                              Text(
+                                "To'lov usulini tanlang",
+                                style: boldBlack.copyWith(fontSize: 20),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                "Buyurtmani yakunlash uchun to'lov usulini tanlang",
+                                style: regularText.copyWith(
+                                  fontSize: 14,
+                                  color: AppColor.secondaryText,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
                         const SizedBox(height: 30),
                         ...type.map((e) => typeItem(e)),
                         // const SizedBox(height: 20),
