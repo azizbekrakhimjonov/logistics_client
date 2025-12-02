@@ -22,7 +22,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     emit(HistoryLoadingState());
     try {
       List<History> res = await _api.getOrderHistoryList();
-      print("RESSS:${res}");
+      print("RESSS:$res");
       emit(HistorySuccessState(data: res));
     } catch (e) {
       emit(HistoryErrorState(message: e.toString()));

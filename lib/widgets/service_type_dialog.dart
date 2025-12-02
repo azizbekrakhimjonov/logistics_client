@@ -95,7 +95,7 @@ class ServiceTypeDialog extends StatelessWidget {
                 style: mediumBlack.copyWith(fontSize: 16),
               ),
             ),
-            Icon(
+            const Icon(
               Icons.arrow_forward_ios,
               color: AppColor.primary,
               size: 20,

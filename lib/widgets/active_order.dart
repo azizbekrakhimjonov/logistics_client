@@ -9,14 +9,22 @@ import '../models/active_order.dart';
 
 class ActiveOrderContainer extends StatelessWidget {
   final ActiveOrder order;
-  const ActiveOrderContainer({super.key,required this.order});
+  const ActiveOrderContainer({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
-    var categoryName = order.comment == null ? Services.translate(context.locale.toString(), order.categoryObj!.category.nameUz, order.categoryObj!.category.nameRu) : order.comment;
-    var quantity = order.comment == null ? " ${order.categoryObj!.quantity} ${order.categoryObj!.unit}" : "";
+    var categoryName = order.comment ??
+        Services.translate(
+            context.locale.toString(),
+            order.categoryObj!.category.nameUz,
+            order.categoryObj!.category.nameRu);
+    var quantity = order.comment == null
+        ? " ${order.categoryObj!.quantity} ${order.categoryObj!.unit}"
+        : "";
     var image = order.driver?.user.picCompress;
-    var serviceTypeText = order.serviceType == 'material' ? 'I need a material' : 'I need a driver';
+    var serviceTypeText = order.serviceType == 'material'
+        ? 'I need a material'
+        : 'I need a driver';
     return Positioned(
       bottom: MediaQuery.of(context).viewPadding.bottom + 30,
       left: 24,
@@ -29,65 +37,80 @@ class ActiveOrderContainer extends StatelessWidget {
             color: AppColor.white, borderRadius: BorderRadius.circular(20)),
         child: Column(children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical:10.0),
-            child: Row(children: [
-              Container(
-              width: 50, // Adjust the width and height as per your requirement
-              height: 50,
-              child: ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: image ?? "",
-                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      const CupertinoActivityIndicator(),
-                  // CircularProgressIndicator(value: downloadProgress.progress),
-                  errorWidget: (context, url, error) =>
-                      Image.asset(AssetImages.defaultImage, fit: BoxFit.cover),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal:10.0),
-              child: Text("Abdulla",style: mediumBlack.copyWith(fontSize: 17),maxLines: 2,),
-            ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  InkWell(
-                    onTap: (){},
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(40),color: AppColor.primary),
-                      child: Icon(Icons.call,color: AppColor.white,),
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child: Row(
+              children: [
+                SizedBox(
+                  width:
+                      50, // Adjust the width and height as per your requirement
+                  height: 50,
+                  child: ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: image ?? "",
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) =>
+                              const CupertinoActivityIndicator(),
+                      // CircularProgressIndicator(value: downloadProgress.progress),
+                      errorWidget: (context, url, error) => Image.asset(
+                          AssetImages.defaultImage,
+                          fit: BoxFit.cover),
                     ),
                   ),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Text(
+                      order.driver?.user.name ?? "Haydovchi",
+                      style: mediumBlack.copyWith(fontSize: 17),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {},
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(40),
+                        color: AppColor.primary),
+                    child: const Icon(
+                      Icons.call,
+                      color: AppColor.white,
+                    ),
+                  ),
+                ),
+                // IconButton(onPressed: (){}, icon: Icon(Icons.call))
+              ],
             ),
-            // IconButton(onPressed: (){}, icon: Icon(Icons.call))
-            ],),
           ),
-
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: SvgPicture.asset(AssetImages.locationIcon, height: 30),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Yetkazish manzili",
-                        style: regularText.copyWith(color: AppColor.grayText)),
-                    SizedBox(height: 5),
-                    Text(
-                      order.address,
-                      style: mediumBlack,
-                    ),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Yetkazish manzili",
+                          style:
+                              regularText.copyWith(color: AppColor.grayText)),
+                      const SizedBox(height: 5),
+                      Text(
+                        order.address,
+                        style: mediumBlack,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 )
               ],
             ),
@@ -96,34 +119,48 @@ class ActiveOrderContainer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: quantity.isEmpty ? Container() : Image.asset(AssetImages.cementImage, height: 30),
+                  child: quantity.isEmpty
+                      ? Container()
+                      : Image.asset(AssetImages.cementImage, height: 30),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(categoryName, style: regularText),
-                    SizedBox(height: 5),
-                    Text(
-                      quantity,
-                      style: regularText,
-                    ),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        categoryName ?? "",
+                        style: regularText,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        quantity,
+                        style: regularText,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 )
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
             child: Row(
               children: [
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: order.serviceType == 'material' 
-                        ? AppColor.primary.withOpacity(0.1) 
+                    color: order.serviceType == 'material'
+                        ? AppColor.primary.withOpacity(0.1)
                         : AppColor.lightGreen.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -131,8 +168,8 @@ class ActiveOrderContainer extends StatelessWidget {
                     serviceTypeText,
                     style: mediumBlack.copyWith(
                       fontSize: 12,
-                      color: order.serviceType == 'material' 
-                          ? AppColor.primary 
+                      color: order.serviceType == 'material'
+                          ? AppColor.primary
                           : AppColor.lightGreen,
                     ),
                   ),
@@ -159,7 +196,7 @@ class ActiveOrderContainer extends StatelessWidget {
                         Text("Status",
                             style:
                                 regularText.copyWith(color: AppColor.grayText)),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Text(
                           Services.getStatusString(order.status),
                           style: boldBlack.copyWith(color: AppColor.lightGreen),
@@ -169,7 +206,7 @@ class ActiveOrderContainer extends StatelessWidget {
                     )
                   ],
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -177,9 +214,9 @@ class ActiveOrderContainer extends StatelessWidget {
                       Text("Narxi",
                           style:
                               regularText.copyWith(color: AppColor.grayText)),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       Text(
-                         Services.moneyFormat(order.price.toString()) ?? "",
+                        Services.moneyFormat(order.price.toString()) ?? "",
                         style: boldBlack,
                         maxLines: 2,
                         textAlign: TextAlign.end,

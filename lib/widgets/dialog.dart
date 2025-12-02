@@ -28,7 +28,6 @@ class MyDialog extends StatelessWidget {
           },
         ),
         CupertinoDialogAction(
-          child: Text('Ha', style: mediumBlack.copyWith(color: AppColor.red)),
           isDestructiveAction: true,
           onPressed: () {
             
@@ -39,6 +38,7 @@ class MyDialog extends StatelessWidget {
 
             // Do something destructive.
           },
+          child: Text('Ha', style: mediumBlack.copyWith(color: AppColor.red)),
         ),
       ],
     );

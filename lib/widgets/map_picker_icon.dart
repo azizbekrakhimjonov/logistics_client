@@ -22,7 +22,7 @@ class MapPickerIcon extends StatelessWidget {
         repeatPauseDuration: const Duration(milliseconds: 100),
         child: Material(
           color: Colors.transparent,
-          shape: CircleBorder(),
+          shape: const CircleBorder(),
           child: SvgPicture.asset(
             AssetImages.location,
             height: 70,

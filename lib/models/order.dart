@@ -36,7 +36,7 @@ class Order {
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         comment: json["comment"],
-        categoryUnit: json["category_unit"] == null ? 0: json["category_unit"],
+        categoryUnit: json["category_unit"] ?? 0,
         serviceType: json["service_type"] ?? 'material',
     );
 

@@ -31,7 +31,7 @@ class UserContent {
       }
       
       return UserContent(
-        preOrder: json["pre_order"] == null ? 0 : json["pre_order"],
+        preOrder: json["pre_order"] ?? 0,
         order: orderId ?? 0,
         user: User.fromJson(json["user"]),
       );

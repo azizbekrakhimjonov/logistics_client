@@ -4,7 +4,6 @@
 
 import 'dart:convert';
 
-import 'package:logistic/utils/utils.dart';
 
 List<History> historyFromJson(String str) => List<History>.from(json.decode(str).map((x) => History.fromJson(x)));
 

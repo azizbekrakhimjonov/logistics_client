@@ -15,8 +15,8 @@ class InputField extends StatefulWidget {
   final double radius;
   final bool readOnly;
 
-  InputField(
-      {Key? key,
+  const InputField({
+      super.key,
       required this.title,
       required this.value,
       required this.onChange,
@@ -40,7 +40,7 @@ class _InputFieldState extends State<InputField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         widget.title.isNotEmpty ? Container(
           padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 10),
@@ -80,7 +80,7 @@ separator: " ",)
                     color: AppColor.primary.withOpacity(0.5), width: 1.0),
                 borderRadius: BorderRadius.circular(widget.radius)),
             border: OutlineInputBorder(
-                borderSide: BorderSide(),
+                borderSide: const BorderSide(),
                 borderRadius: BorderRadius.circular(widget.radius)),
             enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(

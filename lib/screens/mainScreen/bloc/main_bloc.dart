@@ -36,7 +36,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     try {
       dynamic res = await _api.checkUser();
 
-      print("RESSS:${res}");
+      print("RESSS:$res");
       emit(MainSuccessState(data: res));
     } catch (e) {
       emit(MainErrorState(message: e.toString()));
@@ -51,7 +51,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       print(res);
       emit(PreOrderSuccessState(id:res));
     } catch (e) {
-      print("BlocError: ${e}");
+      print("BlocError: $e");
       emit(PreOrderErrorState(message: e.toString()));
     }
   }
@@ -64,7 +64,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       print(res);
       emit(GetOrderSuccessState(data:res));
     } catch (e) {
-      print("BlocError: ${e}");
+      print("BlocError: $e");
       emit(GetOrderErrorState(message: e.toString()));
     }
   }

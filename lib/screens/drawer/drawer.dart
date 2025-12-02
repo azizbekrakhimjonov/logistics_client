@@ -12,6 +12,8 @@ import '../../models/user_content.dart';
 import '../../routes.dart';
 
 class MainDrawer extends StatefulWidget {
+  const MainDrawer({super.key});
+
   @override
   _MainDrawerState createState() => _MainDrawerState();
 }
@@ -24,7 +26,7 @@ class _MainDrawerState extends State<MainDrawer> {
   Widget buildListTile(String title, String icon, Function tapHandler) {
     return ListTile(
       splashColor: AppColor.primary.withOpacity(0.3),
-      contentPadding: EdgeInsets.symmetric(horizontal: 35),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 35),
       leading: SvgPicture.asset(icon, width: 35, height: 35),
       title: Text(title, style: mediumBlack.copyWith(fontSize: 18)),
       onTap: () => tapHandler(),
@@ -41,7 +43,7 @@ class _MainDrawerState extends State<MainDrawer> {
     dynamic user = await SharedPref().read("user");
     setState(() {
       userData = UserContent.fromJson(user);
-      debugPrint("userData: ${userData}");
+      debugPrint("userData: $userData");
     });
   }
 
@@ -65,7 +67,7 @@ class _MainDrawerState extends State<MainDrawer> {
                   height: MediaQuery.of(context).size.height * 0.33,
                 ),
                 Container(
-                  child: Column(
+                  child: const Column(
                     children: <Widget>[],
                   ),
                 ),
@@ -92,7 +94,7 @@ class _MainDrawerState extends State<MainDrawer> {
                                 userData!.user.picCompress??"",
                             progressIndicatorBuilder:
                                 (context, url, downloadProgress) =>
-                                    CupertinoActivityIndicator(),
+                                    const CupertinoActivityIndicator(),
                             // CircularProgressIndicator(value: downloadProgress.progress),
                             errorWidget: (context, url, error) =>
                                 Image.asset(AssetImages.defaultImage,fit: BoxFit.cover),
@@ -109,8 +111,8 @@ class _MainDrawerState extends State<MainDrawer> {
                           // ),
                         ),
                       ),
-                      SizedBox(height: 25),
-                      Container(
+                      const SizedBox(height: 25),
+                      SizedBox(
                         width: 300,
                         child: Text(
                          userData?.user.name ?? "",
@@ -125,7 +127,7 @@ class _MainDrawerState extends State<MainDrawer> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           buildListTile(
@@ -163,7 +165,7 @@ class _MainDrawerState extends State<MainDrawer> {
               Navigator.of(context).pop();
             },
           ),
-          Spacer(),
+          const Spacer(),
           // Expanded(
           //   child: Container(),
           // ),
@@ -178,15 +180,15 @@ class _MainDrawerState extends State<MainDrawer> {
                 Navigator.pushNamedAndRemoveUntil(
                     context, Routes.login, (route) => false);
               },
-              child: Text("exit".tr(),
-                  style: mediumBlack.copyWith(
-                      color: AppColor.secondaryText, fontSize: 20)),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColor.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
+              child: Text("exit".tr(),
+                  style: mediumBlack.copyWith(
+                      color: AppColor.secondaryText, fontSize: 20)),
             ),
           )
         ],

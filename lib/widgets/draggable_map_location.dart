@@ -60,21 +60,21 @@ class DraggableMapLocation extends StatelessWidget {
                       child: Divider(),
                     ),
                     address.isNotEmpty ?
-                       Container(
+                       SizedBox(
                       width: double.infinity,
                       // color: AppColor.errorRed,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: (address as List<MyAddress>)
                                 .map((e) => InkWell(
                                   onTap: () => setLocation(e.id, e.long, e.lat, e.name),
                                   child: Container(
-                                        padding: EdgeInsets.symmetric(vertical: 10,horizontal: 15),
-                                        margin: EdgeInsets.symmetric(horizontal: 5,vertical: 15),
+                                        padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 15),
+                                        margin: const EdgeInsets.symmetric(horizontal: 5,vertical: 15),
                                         decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(20),
@@ -85,7 +85,7 @@ class DraggableMapLocation extends StatelessWidget {
                                                 blurRadius: 10,
                                                 color: AppColor.black
                                                     .withOpacity(0.2),
-                                                offset: Offset(1.0, 6.0),
+                                                offset: const Offset(1.0, 6.0),
                                               )
                                             ]),
                                         child: Text(e.name),
@@ -95,10 +95,10 @@ class DraggableMapLocation extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ):SizedBox(),
+                    ):const SizedBox(),
                     
                     
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     DefaultButton(title: "Tayyor", onPress: () => openSheet(),disable: false)
                     //  TextButton(
                     //     onPressed: () => openSheet(), child: Text("send").tr()),
@@ -122,7 +122,7 @@ class DraggableMapLocation extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: SvgPicture.asset(AssetImages.circle),
           ),
-          SizedBox(width: 7),
+          const SizedBox(width: 7),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -130,8 +130,8 @@ class DraggableMapLocation extends StatelessWidget {
                 "Boshlang‘ich manzil",
                 style: regularText.copyWith(color: AppColor.secondaryText),
               ),
-              SizedBox(height: 5),
-              Container(
+              const SizedBox(height: 5),
+              SizedBox(
                 height: 50,
                 width: size,
                 child: TextFormField(

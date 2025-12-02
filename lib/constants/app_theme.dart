@@ -7,7 +7,6 @@ import 'package:logistic/constants/colors.dart';
 // import 'colors.dart';
 
 final ThemeData themeData = ThemeData(
-    indicatorColor: Colors.black,
     fontFamily: "Stem",
     primaryColor: AppColor.primary,//Colors.black,
     scaffoldBackgroundColor: Colors.white,
@@ -16,7 +15,7 @@ final ThemeData themeData = ThemeData(
     //         borderSide: BorderSide(color: AppColor.primary.withOpacity(0.5), width: 1.0),
     //       ),),
     // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-    primaryIconTheme: IconThemeData(color: Colors.black),
+    primaryIconTheme: const IconThemeData(color: Colors.black),
     useMaterial3: true,
     // brightness: Brightness.dark,
     appBarTheme: const AppBarTheme(
@@ -32,8 +31,8 @@ final ThemeData themeData = ThemeData(
       ),
       titleTextStyle: TextStyle(color: Colors.white),
     ),
-    scrollbarTheme: ScrollbarThemeData(thumbColor: MaterialStateProperty.all<Color>(Colors.red)
-        )
+    scrollbarTheme: ScrollbarThemeData(thumbColor: WidgetStateProperty.all<Color>(Colors.red)
+        ), tabBarTheme: TabBarThemeData(indicatorColor: Colors.black)
     
     );
 

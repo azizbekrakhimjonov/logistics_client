@@ -39,7 +39,7 @@ class SelectLuggages extends StatelessWidget {
       snapSizes: const [0.7],
       builder: (BuildContext context, ScrollController scrollController) {
         return Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             ),
@@ -54,7 +54,7 @@ class SelectLuggages extends StatelessWidget {
                           // closeSheet();
                           Navigator.pop(context);
                         },
-                        icon: Icon(Icons.close)),
+                        icon: const Icon(Icons.close)),
                   ],
                 ),
                 // SizedBox(height: ),
@@ -87,7 +87,7 @@ class SelectLuggages extends StatelessWidget {
                               },
                               child: Container(
                                 height: 100,
-                                padding: EdgeInsets.all(12),
+                                padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                     color: AppColor.gray,
                                     border: Border.all(
@@ -101,16 +101,16 @@ class SelectLuggages extends StatelessWidget {
                                     imageUrl: item.icon,
                                     progressIndicatorBuilder:
                                         (context, url, downloadProgress) =>
-                                            CupertinoActivityIndicator(),
+                                            const CupertinoActivityIndicator(),
                                     // CircularProgressIndicator(value: downloadProgress.progress),
                                     errorWidget: (context, url, error) =>
-                                        Icon(Icons.error,color: AppColor.primary,),
+                                        const Icon(Icons.error,color: AppColor.primary,),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox(height: 9),
+                          const SizedBox(height: 9),
                           Text(
                             Services.translate(context.locale.toString(),
                                 item.nameUz, item.nameRu),
@@ -132,7 +132,7 @@ class SelectLuggages extends StatelessWidget {
                               },
                               child: Container(
                                 height: 100,
-                                padding: EdgeInsets.all(12),
+                                padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                     color: AppColor.gray,
                                     border: Border.all(
@@ -141,13 +141,13 @@ class SelectLuggages extends StatelessWidget {
                                     ),
                                     borderRadius: BorderRadius.circular(
                                         10)), // color of grid items
-                                child: Center(
+                                child: const Center(
                                   child: Icon(Icons.add,size: 35,color: AppColor.primary,),
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox(height: 9),
+                          const SizedBox(height: 9),
                           Text(
                             "Boshqa xom ashyo kiritish",
                             // Services.translate(context.locale.toString(),

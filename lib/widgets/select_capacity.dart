@@ -80,7 +80,7 @@ class SelectCapacity extends StatelessWidget {
                               child: Container(
                                 height: 60,
                                 // width: 50,
-                                padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                                padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                                 decoration: BoxDecoration(
                                     color: item == activeIndex
                                         ? AppColor.primary

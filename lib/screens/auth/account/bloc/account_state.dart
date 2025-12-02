@@ -22,7 +22,7 @@ class AccountSuccessState extends AccountState {
 
 class AccountErrorState extends AccountState {
   final String message;
-  AccountErrorState({required this.message});
+  const AccountErrorState({required this.message});
 
   @override 
   List<Object> get props =>[message];

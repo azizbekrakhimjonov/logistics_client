@@ -18,7 +18,7 @@ class OrderDetailScreen extends StatelessWidget {
     final ActiveOrder order = await repo.getOrderDetail(id);
     // Debug API response
     // ignore: avoid_print
-    print('OrderDetail loaded: '+order.toJson().toString());
+    print('OrderDetail loaded: ${order.toJson()}');
     return order;
   }
 
@@ -94,7 +94,7 @@ class OrderDetailScreen extends StatelessWidget {
                       final uri = Uri.parse(order.paymentUrl!);
                       if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
                         // ignore: avoid_print
-                        print('Could not launch '+order.paymentUrl!);
+                        print('Could not launch ${order.paymentUrl!}');
                       }
                     },
                     child: Text('pay'.tr()),

@@ -28,7 +28,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
 
   @override
   void initState() {
-    _bloc.add(GetHistory());
+    _bloc.add(const GetHistory());
     // TODO: implement initState
     super.initState();
   }
@@ -62,18 +62,18 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
             },
             builder: (context, state) {
               if (state is HistoryLoadingState){
-                return Center(child: CupertinoActivityIndicator(color: AppColor.primary,radius: 30,));
+                return const Center(child: CupertinoActivityIndicator(color: AppColor.primary,radius: 30,));
               }  if (state is HistorySuccessState) {
               return RefreshIndicator(
                 onRefresh: () async {
-                  _bloc.add(GetHistory());
+                  _bloc.add(const GetHistory());
                 },
                 child: items.isNotEmpty ? ListView.builder(
                   itemBuilder: (BuildContext context, int index) {
                     return orderItem(item:items[index]);
                   },
                   itemCount: items.length,
-                ): Center(child: Container(child: Text("Sizda hali hech qanday zakaz yo'q")),),
+                ): Center(child: Container(child: const Text("Sizda hali hech qanday zakaz yo'q")),),
               ); }
               return Container();
             },
@@ -82,7 +82,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
   }
 
   Widget orderItem({required History item}) {
-    var categoryName = item.comment == null ? Services.translate(context.locale.toString(), item.categoryObj!.category.nameUz, item.categoryObj!.category.nameRu) : item.comment;
+    var categoryName = item.comment ?? Services.translate(context.locale.toString(), item.categoryObj!.category.nameUz, item.categoryObj!.category.nameRu);
     var quantity = item.comment == null ? " ${item.categoryObj!.quantity} ${item.categoryObj!.unit}" : "";
     var serviceTypeText = item.serviceType == 'material' ? 'I need a material' : 'I need a driver';
     return InkWell(
@@ -90,8 +90,8 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
         Navigator.pushNamed(context, Routes.orderDetail, arguments: {"id": item.id});
       },
       child: Container(
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      margin: EdgeInsets.symmetric(vertical: 9, horizontal: 15),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      margin: const EdgeInsets.symmetric(vertical: 9, horizontal: 15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: AppColor.white,
@@ -101,7 +101,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
             spreadRadius: 1,
             blurRadius: 5,
             color: AppColor.black.withOpacity(0.2),
-            offset: Offset(1.0, 1.0),
+            offset: const Offset(1.0, 1.0),
           ),
         ],
       ),
@@ -124,7 +124,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   // Text(Services.dateFormatter(item.updatedAt), style: mediumBlack),
                 ],
               ),
@@ -132,12 +132,12 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                   style: mediumBlack.copyWith(color: AppColor.primary)),
             ],
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: item.serviceType == 'material' 
                       ? AppColor.primary.withOpacity(0.1) 
@@ -178,7 +178,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
               ),
             ],
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [

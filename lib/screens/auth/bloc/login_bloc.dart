@@ -83,7 +83,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       );
       emit(const LoginSuccessState());
     } catch (e) {
-      print("ERROR:${e}");
+      print("ERROR:$e");
       if (e is Response) {
         if (e.data is Map && e.data["error"] != null) {
           emit(

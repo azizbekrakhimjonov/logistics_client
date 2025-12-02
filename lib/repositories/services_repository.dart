@@ -30,7 +30,7 @@ class ServicesRepository {
             response.data.map((x) => Model.Category.fromJson(x)));
         //  List<dynamic> data = categoryFromJson(response.data);
         // User data = User.fromJson(response.data);
-        print("DATA:${data}");
+        print("DATA:$data");
         return data;
       } else {
         return [];
@@ -59,7 +59,7 @@ class ServicesRepository {
         "service_type": data.serviceType
       };
       String token = await SharedPref().read('token') ?? '';
-      print("RequestDATA: ${jsonData}");
+      print("RequestDATA: $jsonData");
 
       Response response = await HeaderOptions.dio.post(Endpoint.preOrder,
           data: json.encode(jsonData),
@@ -115,7 +115,7 @@ class ServicesRepository {
   Future<dynamic> deleteOrder(int id) async {
     try {
       Response response = await HeaderOptions.dio.delete(
-          Endpoint.preOrderDelete + "$id/",
+          "${Endpoint.preOrderDelete}$id/",
           options: await HeaderOptions().option());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -138,7 +138,7 @@ class ServicesRepository {
     try {
       print("getOrderDetail");
       Response response = await HeaderOptions.dio.get(
-          Endpoint.preOrderDetail + "/${id}",
+          "${Endpoint.preOrderDetail}/${id}",
           options: await HeaderOptions().option());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -182,7 +182,7 @@ class ServicesRepository {
     try {
       print("getOrderDetail");
       Response response = await HeaderOptions.dio.get(
-          Endpoint.orderDetail + "/${id}",
+          "${Endpoint.orderDetail}/${id}",
           options: await HeaderOptions().option());
 
       if (response.statusCode == 200 || response.statusCode == 201) {

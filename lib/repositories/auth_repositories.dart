@@ -14,7 +14,7 @@ class AuthRepository {
   Future<dynamic> login(String phone, String name) async {
     try {
       var data = {"username": phone, "name": name, "language": "uz"};
-      print("Login: ${data}");
+      print("Login: $data");
 
       Response response = await AuthService.dio.post(
         Endpoint.register,
@@ -42,8 +42,9 @@ class AuthRepository {
 
       if (e.type == DioExceptionType.badResponse) {
         errorMessage = "Xatolik sodir bo'ldi. ${e.response!.data["error"]}";
-      } else
+      } else {
         errorMessage = DioExceptions.fromDioError(e).toString();
+      }
 
       throw errorMessage;
     }
@@ -121,7 +122,7 @@ class AuthRepository {
         await SharedPref().save("user", data);
         // dynamic user = await SharedPref().read("user");
 
-         print("RESPOMSE: ${data}");
+         print("RESPOMSE: $data");
         return data;
       } else {
         return [];
@@ -139,7 +140,7 @@ class AuthRepository {
     try {
      
       String refreshToken = await SharedPref().read('refresh_token') ?? '';
-       print("REFRESH_TOKEN: ${refreshToken}");
+       print("REFRESH_TOKEN: $refreshToken");
       var data = {"refresh": refreshToken};
       Response response = await AuthService.dio.post(
         Endpoint.refreshToken,
@@ -191,7 +192,7 @@ class AuthRepository {
       print("formData::::$formData");
 
       Response response = await HeaderOptions.dio.put(
-        Endpoint.updateUser + '/$phoneNumber/',
+        '${Endpoint.updateUser}/$phoneNumber/',
         queryParameters: {
           "_method": "PUT",
         },

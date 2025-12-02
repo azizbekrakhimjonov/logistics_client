@@ -22,13 +22,13 @@ class Routes {
      static const String account = AccountAppBar.routeName;
 
   static final routes = <String, WidgetBuilder>{
-    login: (context) => LoginScreen(),
-    codeEntry: (context) => CodeEntryScreen(),
-    languageChange: (context) => ChangeLanguage(),
-    mainScreen: (context) => MainScreen(),
-    myOrders: (context) => MyOrdersScreen(),
-    vehiclechoose: (context) => VehicleChooseScreen(),
+    login: (context) => const LoginScreen(),
+    codeEntry: (context) => const CodeEntryScreen(),
+    languageChange: (context) => const ChangeLanguage(),
+    mainScreen: (context) => const MainScreen(),
+    myOrders: (context) => const MyOrdersScreen(),
+    vehiclechoose: (context) => const VehicleChooseScreen(),
     orderDetail: (context) => const OrderDetailScreen(),
-    account: (context) => AccountAppBar()
+    account: (context) => const AccountAppBar()
   };
 }

@@ -25,12 +25,12 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
         backgroundColor: AppColor.primary,
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 25,vertical: 25),
+        padding: const EdgeInsets.symmetric(horizontal: 25,vertical: 25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Language".tr(), style: regularText.copyWith(color: AppColor.secondaryText)),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ToggleButton(
               width: 200.0,
               height: 40.0,
@@ -42,11 +42,11 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
               leftDescription: 'Русский',
               rightDescription: "O'zbek",
               onLeftToggleActive: () {
-                context.setLocale(Locale("ru"));
+                context.setLocale(const Locale("ru"));
                 print('left toggle activated');
               },
               onRightToggleActive: () {
-                context.setLocale(Locale("uz"));
+                context.setLocale(const Locale("uz"));
                 print('right toggle activated');
               },
             ),

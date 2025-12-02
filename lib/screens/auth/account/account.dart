@@ -158,7 +158,7 @@ class _AccountAppBarState extends State<AccountAppBar> {
             ),
           ),
           floatingActionButton: Container(
-            margin: EdgeInsets.symmetric(vertical: 30),
+            margin: const EdgeInsets.symmetric(vertical: 30),
             height: 50,
             child: DefaultButton(
                 disable: false,
@@ -239,7 +239,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                           color: AppColor.white, fontSize: 25),
                       textAlign: TextAlign.left,
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                   ],
                 ),
                 const SizedBox(
@@ -247,7 +247,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                 ),
                 Column(
                   children: [
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Card(
                       elevation: 10,
                       shape: RoundedRectangleBorder(
@@ -276,7 +276,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                                   child: Center(
                                       child: IconButton(
                                     focusColor: AppColor.orange,
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.camera_alt_rounded,
                                       color: AppColor.primary,
                                     ),
@@ -323,12 +323,12 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
         print("user:${userData.url}");
         return CachedNetworkImageProvider(
           userData.url,
-          errorListener: (p0) => AssetImage(
+          errorListener: (p0) => const AssetImage(
             AssetImages.defaultImage,
           ) as ImageProvider,
         );
       } else {
-        return AssetImage(
+        return const AssetImage(
           AssetImages.defaultImage,
         ) as ImageProvider;
       }
@@ -356,14 +356,14 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
           Text("Profil rasmini tanlang".tr(),
                   style: boldBlack.copyWith(fontSize: 20))
               .tr(),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 _button("Kameradan".tr(), () => takePhoto(ImageSource.camera),
                     Icons.camera),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _button("Gallareyadan".tr(), () => takePhoto(ImageSource.gallery),
                     Icons.image),
               ])
@@ -379,7 +379,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, size: 30, color: AppColor.primary),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Text(title, style: boldBlack).tr()
         ],
       ),

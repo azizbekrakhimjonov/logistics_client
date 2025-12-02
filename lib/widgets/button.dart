@@ -17,7 +17,7 @@ class DefaultButton extends StatelessWidget {
       child: Container(
           width: 160,
           // height: 35,
-          padding: EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
             color: disable ? AppColor.gray : AppColor.primary,
             borderRadius: BorderRadius.circular(10),

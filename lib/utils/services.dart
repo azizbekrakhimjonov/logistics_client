@@ -19,34 +19,38 @@ class Services {
       return ru;
     } else if (language == "uz") {
       return uz;
-    } 
-     
+    }
   }
 
-  static void showSnackBar(BuildContext context, dynamic message,Color color) {
+  static void showSnackBar(BuildContext context, dynamic message, Color color) {
+    // Hide any existing snackbar first
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
     final snackBar = SnackBar(
       content: Text(message.replaceAll("Exception:", "")).tr(),
       backgroundColor: color,
-    
+      duration: Duration(seconds: 4),
+      behavior: SnackBarBehavior.floating,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
-static String? moneyFormat(String price) {
-  if (price.length > 0) {
-  var value = price;
-  value = value.replaceAll(RegExp(r'\D'), '');
-  value = value.replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), ' ');
-  return value;
+
+  static String? moneyFormat(String price) {
+    if (price.isNotEmpty) {
+      var value = price;
+      value = value.replaceAll(RegExp(r'\D'), '');
+      value = value.replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), ' ');
+      return value;
+    }
+    return null;
   }
- }
 
- static String dateFormatter(DateTime date){
-   final DateFormat formatter = DateFormat('dd-MM-yyyy hh:mm');
-  final String formatted = formatter.format(date);
+  static String dateFormatter(DateTime date) {
+    final DateFormat formatter = DateFormat('dd-MM-yyyy hh:mm');
+    final String formatted = formatter.format(date);
 
-  return formatted;
-  print(formatted); // something like 2013-04-20
- }
+    return formatted;
+  }
 
   // static void _showSnackBar(BuildContext context, dynamic message) {
   //   final snackBar = SnackBar(
@@ -57,44 +61,43 @@ static String? moneyFormat(String price) {
   // }
 
   static String getStatusString(String status) {
-  switch (status.toLowerCase()) {
-    case "pending":
-      return 'Ожидание оплаты';
-    case "payment_confirm":
-      return 'Оплата подтверждена';
-    case "truck_on_the_way":
-      return 'Грузовик в пути';
-    case "loading_delivery":
-      return 'Загрузка доставки';
-    case "loaded":
-      return 'Загружено';
-    case "order_confirm":
-      return 'Заказ подтвержден';
-    case "processing":
-      return 'Обрабатывается';
-    case "out_for_delivery":
-      return 'На доставке';
-    case "on_hold":
-      return 'На удержании';
-    case "delivered":
-      return 'Доставлен';
-    case "failed_delivery_attempt":
-      return 'Неудачная попытка доставки';
-    case "cancelled":
-      return 'Отменен';
-    case "returned":
-      return 'Возвращен';
-    case "refunded":
-      return 'Возврат средств';
-    case "completed":
-      return 'Завершено';
-    case "rated":
-      return 'Оценен';
-    case "pending_review":
-      return 'Ожидает обзора';
-    default:
-      return 'Unknown status';
+    switch (status.toLowerCase()) {
+      case "pending":
+        return 'Ожидание оплаты';
+      case "payment_confirm":
+        return 'Оплата подтверждена';
+      case "truck_on_the_way":
+        return 'Грузовик в пути';
+      case "loading_delivery":
+        return 'Загрузка доставки';
+      case "loaded":
+        return 'Загружено';
+      case "order_confirm":
+        return 'Заказ подтвержден';
+      case "processing":
+        return 'Обрабатывается';
+      case "out_for_delivery":
+        return 'На доставке';
+      case "on_hold":
+        return 'На удержании';
+      case "delivered":
+        return 'Доставлен';
+      case "failed_delivery_attempt":
+        return 'Неудачная попытка доставки';
+      case "cancelled":
+        return 'Отменен';
+      case "returned":
+        return 'Возвращен';
+      case "refunded":
+        return 'Возврат средств';
+      case "completed":
+        return 'Завершено';
+      case "rated":
+        return 'Оценен';
+      case "pending_review":
+        return 'Ожидает обзора';
+      default:
+        return 'Unknown status';
+    }
   }
 }
-}
-

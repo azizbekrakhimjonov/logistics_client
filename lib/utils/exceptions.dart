@@ -34,7 +34,14 @@ class DioExceptions implements Exception {
         message = "Send timeout in connection with API server";
         break;
       case DioExceptionType.connectionError:
-        message = "Connection error: CORS policy may be blocking the request. Please check if the server allows requests from this origin.";
+        // More helpful error message for CORS issues
+        if (dioError.message?.contains('CORS') == true || 
+            dioError.message?.contains('cors') == true ||
+            dioError.message?.contains('origin') == true) {
+          message = "CORS xatosi: Server bu origin'dan so'rovlarni qabul qilmayapti. Iltimos, backend server CORS sozlamalarini tekshiring.";
+        } else {
+          message = "Ulanish xatosi: Internet aloqasini yoki server holatini tekshiring.";
+        }
         break;
       default:
         message = "Something went wrong - ${dioError.type}";

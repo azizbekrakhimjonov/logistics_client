@@ -35,12 +35,12 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       try {
         Order res = await _api.getPreOrderDetail(event.id);
         if (res.proposedPrices.isEmpty) {
-          print("RES: ${retryCount}");
+          print("RES: $retryCount");
 
           // Retry for 30 seconds if response length is empty
           if (retryCount <= 10) {
             retryCount++;
-            timer = Timer(Duration(seconds: 3), getOrderDetail);
+            timer = Timer(const Duration(seconds: 3), getOrderDetail);
           } else {
              emit(OrderSuccessState(data: res));
           }
@@ -54,7 +54,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     }
 
     await getOrderDetail();
-    await Future.delayed(Duration(seconds: 40));
+    await Future.delayed(const Duration(seconds: 40));
     if (!isCompleted) {
       emit(OrderInitial());
     }
@@ -66,9 +66,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       await _api.deleteOrder(event.id);
 
       // print(res);
-      emit(OrderDeleteSuccessState());
+      emit(const OrderDeleteSuccessState());
     } catch (e) {
-      print("BlocError: ${e}");
+      print("BlocError: $e");
       emit(OrderDeleteErrorState(message: e.toString()));
     }
   }

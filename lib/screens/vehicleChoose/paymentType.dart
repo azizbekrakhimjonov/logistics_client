@@ -100,7 +100,7 @@ class _PaymentTypeState extends State<PaymentType> {
             spreadRadius: 1,
             blurRadius: 5,
             color: AppColor.black.withOpacity(0.2),
-            offset: Offset(1.0, 1.0),
+            offset: const Offset(1.0, 1.0),
           ),
         ]),
         child: DraggableScrollableSheet(
@@ -151,7 +151,7 @@ class _PaymentTypeState extends State<PaymentType> {
                                 style: boldBlack.copyWith(fontSize: 20),
                                 textAlign: TextAlign.center,
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               Text(
                                 "Buyurtmani yakunlash uchun to'lov usulini tanlang",
                                 style: regularText.copyWith(
@@ -204,7 +204,7 @@ class _PaymentTypeState extends State<PaymentType> {
  Widget typeItem(type) {
    bool isSelected = type.id == selectedId;
    return Container(
-     padding: EdgeInsets.symmetric(horizontal: 16),
+     padding: const EdgeInsets.symmetric(horizontal: 16),
      child: Column(
        children: [
          Row(
@@ -213,7 +213,7 @@ class _PaymentTypeState extends State<PaymentType> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
+              SizedBox(
                 height: 40,
                 width: 100,
                 child: Image.asset(type.image,fit: type.id == 4 ? BoxFit.contain : BoxFit.cover)),
@@ -226,7 +226,7 @@ class _PaymentTypeState extends State<PaymentType> {
             });
           }, icon: Icon(isSelected ? Icons.check_circle: Icons.circle), color: isSelected ?AppColor.primary:AppColor.grayText,iconSize: 30,)
          ],),
-        type.id < 3 ? Divider(thickness: 1,color: AppColor.gray): SizedBox(),
+        type.id < 3 ? const Divider(thickness: 1,color: AppColor.gray): const SizedBox(),
        ],
   
      ),

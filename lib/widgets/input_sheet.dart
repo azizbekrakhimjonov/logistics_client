@@ -1,5 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logistic/widgets/button.dart';
 
@@ -27,6 +25,25 @@ class _InputSheetState extends State<InputSheet> {
   FocusNode focusNode = FocusNode();
   final _controller = DraggableScrollableController();
   var keyboardSize = 0.0;
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _comment.addListener(() {
+      setState(() {
+        _hasText = _comment.text.isNotEmpty;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _comment.dispose();
+    focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   void didUpdateWidget(covariant InputSheet oldWidget) {
@@ -108,7 +125,7 @@ class _InputSheetState extends State<InputSheet> {
                       ),
                       const SizedBox(height: 35),
                       DefaultButton(
-                        disable: _comment.text.isEmpty,
+                        disable: !_hasText,
                         title: "Tayyor",
                         onPress: () {
                           // _controller.jumpTo(size)

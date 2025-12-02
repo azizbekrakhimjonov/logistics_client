@@ -71,7 +71,7 @@ Future<void> main() async {
     // statusBarIconBrightness: Brightness.dark // dark text for status bar
   ));
   var token = await SharedPref().read('token') ?? '';
-  print("Token.: ${token}");
+  print("Token.: $token");
   if (token.isEmpty) {
     initialRoute = Routes.login;
   } else {

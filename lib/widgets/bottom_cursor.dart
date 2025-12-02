@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logistic/constants/app_text_style.dart';
 import 'package:pinput/pinput.dart';
 
 import '../constants/constants.dart';

@@ -103,21 +103,21 @@ stopTimer() {
                         style: boldBlack.copyWith(
                             color: AppColor.white, fontSize: 25),
                       ),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       Text("4ta sonli kodni shu yerga kiriting",
                           style: lightBlack.copyWith(color: AppColor.white)),
                     ],
                   ),
                 ),
-                SizedBox(height: 45),
+                const SizedBox(height: 45),
                 OnlyBottomCursor(controller: controller),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 Text(
                   '${((timerMaxSeconds - currentSeconds) ~/ 60).toString().padLeft(2, '0')}:${((timerMaxSeconds - currentSeconds) % 60).toString().padLeft(2, '0')}',
                   textAlign: TextAlign.center,
                   style: boldBlack.copyWith(color: AppColor.secondaryText),
                 ),
-                Spacer(),
+                const Spacer(),
                 Button(
                     title: "Tasdiqlash",
                     onPress: () {
@@ -125,7 +125,7 @@ stopTimer() {
                       // Navigator.pushNamed(context, Routes.mainScreen);
                     },
                     disable: controller.text.length != 4),
-                SizedBox(height: 20)
+                const SizedBox(height: 20)
               ],
             ));
           },

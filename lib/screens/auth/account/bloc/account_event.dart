@@ -12,8 +12,9 @@ class EditProfileEvent extends AccountEvent {
   final String name;
   final String phoneNumber;
 
-  EditProfileEvent({ required this.photo,required this.name,required this.phoneNumber});
+  const EditProfileEvent(
+      {required this.photo, required this.name, required this.phoneNumber});
 
   @override
-  List<Object> get props => [photo,name,phoneNumber];
+  List<Object> get props => [photo, name, phoneNumber];
 }

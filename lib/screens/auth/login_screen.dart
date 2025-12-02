@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Stack(
               children: [
                 Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         color: AppColor.primary,
                         image: DecorationImage(
                             image: AssetImage(AssetImages.city),
@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: MediaQuery.sizeOf(context).height / 2,
                     width: double.infinity,
                     child: Container()),
-                Container(
+                SizedBox(
                   // height: double.infinity,
                   width: double.infinity,
 
@@ -97,8 +97,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   height:
                                       MediaQuery.sizeOf(context).height * 0.45,
                                   width: double.infinity,
-                                  margin: EdgeInsets.symmetric(horizontal: 16),
-                                  padding: EdgeInsets.symmetric(vertical: 20),
+                                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(vertical: 20),
                                   decoration: BoxDecoration(
                                       color: AppColor.white,
                                       boxShadow: [
@@ -107,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           blurRadius: 20,
                                           color:
                                               AppColor.black.withOpacity(0.2),
-                                          offset: Offset(1.0, 1.0),
+                                          offset: const Offset(1.0, 1.0),
                                         )
                                       ],
                                       borderRadius: BorderRadius.circular(8)),
@@ -124,8 +124,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 fontSize: 18,
                                                 color: AppColor.secondaryText),
                                           ),
-                                          SizedBox(height: 10),
-                                          Divider(thickness: 1)
+                                          const SizedBox(height: 10),
+                                          const Divider(thickness: 1)
                                         ],
                                       ),
                                       //  SizedBox(height: 20),
@@ -155,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 // Spacer(),
-                                SizedBox(height: 50),
+                                const SizedBox(height: 50),
                                 Center(
                                     child: Text(
                                   "Ro‘yxatdan o‘tish tugmasini bosish orqali siz bizning Shartlarimizga rozilik bildirasiz",
@@ -177,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void onButtonPressed() {
     print("Validation:${_formKey.currentState!.validate()}");
-    if (_formKey.currentState!.validate() && !_phone.text.isEmpty) {
+    if (_formKey.currentState!.validate() && _phone.text.isNotEmpty) {
       print("Phone:${_phone.value}");
       FocusScope.of(context).requestFocus(focusNode);
       _bloc.add(LoginEnterEvent(
@@ -200,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
         style: mediumBlack,
         dropdownTextStyle: mediumBlack,
         dropdownIconPosition: IconPosition.trailing,
-        flagsButtonMargin: EdgeInsets.only(left: 10),
+        flagsButtonMargin: const EdgeInsets.only(left: 10),
         pickerDialogStyle: PickerDialogStyle(
             countryNameStyle: mediumBlack, countryCodeStyle: boldBlack),
         disableLengthCheck: false,
@@ -213,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: AppColor.primary.withOpacity(0.5), width: 1.0),
                 borderRadius: BorderRadius.circular(8)),
             border: OutlineInputBorder(
-                borderSide: BorderSide(),
+                borderSide: const BorderSide(),
                 borderRadius: BorderRadius.circular(8)),
             enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(

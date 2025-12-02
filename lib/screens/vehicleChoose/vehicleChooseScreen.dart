@@ -25,8 +25,6 @@ class VehicleChooseScreen extends StatefulWidget {
 
 class _VehicleChooseScreenState extends State<VehicleChooseScreen>
     with TickerProviderStateMixin {
-  late final AnimationController _controller;
-
   var activeIndex = -1;
   var _isDetailSheet = false;
   var _isPaymentSheet = false;
@@ -79,17 +77,19 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
+
   @override
   void dispose() {
     // _controller.dispose();
     super.dispose();
   }
 
-  getOrder(){
+  getOrder() {
     if (args == null) return;
     _bloc.add(GetOrder(id: args["id"]));
   }
-  deleteOrder(){
+
+  deleteOrder() {
     if (args == null) return;
     _bloc.add(DeleteOrder(id: args["id"]));
   }
@@ -166,19 +166,19 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
                         Text("List is empty"),
                         SizedBox(height: 20),
                         FloatingActionButton.extended(
-                          backgroundColor: AppColor.primary,
-                          onPressed: () {
-                            getOrder();
-                          },
-                          icon: Icon(
-                            Icons.refresh,
-                            color: AppColor.white,
-                          ),
-                          label: Text(
-                            "Refresh",
-                            style: mediumBlack.copyWith(color: AppColor.white),
-                          )
-                        )
+                            backgroundColor: AppColor.primary,
+                            onPressed: () {
+                              getOrder();
+                            },
+                            icon: Icon(
+                              Icons.refresh,
+                              color: AppColor.white,
+                            ),
+                            label: Text(
+                              "Refresh",
+                              style:
+                                  mediumBlack.copyWith(color: AppColor.white),
+                            ))
                       ],
                     ));
                   } else {
@@ -217,8 +217,8 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
                 ),
               // : null,
               if (_isDetailSheet)
-              details(orderList.firstWhere(
-                          (element) => element.driver.id == activeIndex)),
+                details(orderList
+                    .firstWhere((element) => element.driver.id == activeIndex)),
               if (_isPaymentSheet) paymentType()
             ],
           ),
@@ -226,7 +226,6 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
       ),
     );
   }
-
 
   Widget details(ProposedPrice item) {
     return Detail(
@@ -246,7 +245,7 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
       (element) => element.driver.id == activeIndex,
     );
     return PaymentType(
-      sheet: _paymentSheet, 
+      sheet: _paymentSheet,
       closeSheet: () => _closePaymentSheet(),
       driverId: selectedDriver.driver.id,
       preorderId: args != null ? args["id"] : 0,
@@ -255,70 +254,255 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
 
   Widget item(ProposedPrice item) {
     var id = item.driver.id;
-    return InkWell(
-      onTap: () {
-        setState(() {
-          activeIndex = id;
-        });
-      },
-      child: Container(
-        // padding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-                bottomRight: Radius.circular(10)),
-            color: activeIndex == id ? AppColor.primary : AppColor.gray),
-        child: Column(
-          children: [
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                      Services.translate(context.locale.toString(),
-                          item.driver.car.nameUz, item.driver.car.nameRu),
-                      style: mediumBlack.copyWith(
-                          fontSize: 17,
-                          color: activeIndex == id ? AppColor.white : null)),
-                  Text(
-                    "${item.price}",
-                    style: mediumBlack.copyWith(
-                        color: activeIndex == id
-                            ? AppColor.white
-                            : AppColor.primary),
-                  ),
+    final isSelected = activeIndex == id;
+    final carName = Services.translate(
+      context.locale.toString(),
+      item.driver.car.nameUz,
+      item.driver.car.nameRu,
+    );
+    final formattedPrice = _formatPrice(item.price);
+
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 250),
+      curve: Curves.easeInOutCubic,
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        gradient: isSelected
+            ? LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColor.primary,
+                  AppColor.primary.withOpacity(0.85),
                 ],
+              )
+            : null,
+        color: isSelected ? null : Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: isSelected
+                ? AppColor.primary.withOpacity(0.35)
+                : Colors.black.withOpacity(0.06),
+            blurRadius: isSelected ? 15 : 10,
+            offset: Offset(0, isSelected ? 5 : 3),
+            spreadRadius: isSelected ? 0 : 0,
+          ),
+        ],
+        border: isSelected
+            ? null
+            : Border.all(
+                color: AppColor.gray.withOpacity(0.25),
+                width: 1.5,
               ),
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            setState(() {
+              activeIndex = id;
+            });
+          },
+          borderRadius: BorderRadius.circular(22),
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 18.0),
+            child: Row(
               children: [
-                Align(
-                    heightFactor: 0.65,
+                // Vehicle icon with enhanced design
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 250),
+                  width: 68,
+                  height: 68,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? Colors.white.withOpacity(0.28)
+                        : AppColor.primary.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(18),
+                    border: isSelected
+                        ? Border.all(
+                            color: Colors.white.withOpacity(0.35),
+                            width: 2,
+                          )
+                        : null,
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: Colors.white.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: Offset(0, 2),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Center(
                     child: SvgPicture.asset(
                       AssetImages.vehicle,
-                      alignment: Alignment.bottomLeft,
-                    )),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 16),
-                  child: Text(
-                    "",
-                    style: mediumBlack.copyWith(
-                        color: activeIndex == id ? AppColor.white : null),
+                      width: 38,
+                      height: 38,
+                      colorFilter: ColorFilter.mode(
+                        isSelected ? AppColor.white : AppColor.primary,
+                        BlendMode.srcIn,
+                      ),
+                    ),
                   ),
-                )
+                ),
+                SizedBox(width: 20),
+                // Vehicle name, driver name, and price
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Vehicle name
+                      Text(
+                        carName,
+                        style: mediumBlack.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.3,
+                          color: isSelected ? AppColor.white : AppColor.black,
+                          height: 1.2,
+                        ),
+                      ),
+                      // Driver name (if available)
+                      if (item.driver.user?.name != null) ...[
+                        SizedBox(height: 4),
+                        Text(
+                          item.driver.user!.name!,
+                          style: regularText.copyWith(
+                            fontSize: 13,
+                            color: isSelected
+                                ? AppColor.white.withOpacity(0.85)
+                                : AppColor.secondaryText,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                      SizedBox(height: 8),
+                      // Price with so'm
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? Colors.white.withOpacity(0.25)
+                                  : AppColor.primary.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(10),
+                              border: isSelected
+                                  ? Border.all(
+                                      color: Colors.white.withOpacity(0.3),
+                                      width: 1,
+                                    )
+                                  : null,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.attach_money_rounded,
+                                  size: 18,
+                                  color: isSelected
+                                      ? AppColor.white
+                                      : AppColor.primary,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  formattedPrice,
+                                  style: mediumBlack.copyWith(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 0.6,
+                                    color: isSelected
+                                        ? AppColor.white
+                                        : AppColor.primary,
+                                    height: 1.0,
+                                  ),
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  "so'm",
+                                  style: regularText.copyWith(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: isSelected
+                                        ? AppColor.white.withOpacity(0.9)
+                                        : AppColor.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 12),
+                // Selection indicator with enhanced animation
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 250),
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected ? AppColor.white : Colors.transparent,
+                    border: Border.all(
+                      color: isSelected
+                          ? AppColor.white
+                          : AppColor.secondaryText.withOpacity(0.4),
+                      width: 2.5,
+                    ),
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: AppColor.white.withOpacity(0.6),
+                              blurRadius: 10,
+                              spreadRadius: 1,
+                              offset: Offset(0, 2),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: isSelected
+                      ? Icon(
+                          Icons.check_rounded,
+                          size: 20,
+                          color: AppColor.primary,
+                          weight: 3,
+                        )
+                      : null,
+                ),
               ],
-            )
-          ],
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  String _formatPrice(int price) {
+    // Format price with spaces for thousands
+    String priceStr = price.toString();
+    String formatted = '';
+    int count = 0;
+    for (int i = priceStr.length - 1; i >= 0; i--) {
+      if (count == 3) {
+        formatted = ' ' + formatted;
+        count = 0;
+      }
+      formatted = priceStr[i] + formatted;
+      count++;
+    }
+    return formatted;
   }
 
   Future<void> _showMyDialog() async {
