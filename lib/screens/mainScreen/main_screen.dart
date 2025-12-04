@@ -71,6 +71,10 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
   int selectedAddressId = 0;
   List<dynamic> categories = [];
   String selectedServiceType = 'material'; // Store selected service type
+  String? entityType; // Store entity type: 'individual' or 'legal'
+  String? jshshir; // Store JSHSHIR for individual
+  String? stir; // Store STIR for legal entity
+  String? mfo; // Store МФО for legal entity
   String?
       _selectedAddressName; // Store the selected address name to prevent geocoding override
   String?
@@ -965,12 +969,37 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
           onSelected: (String serviceType) {
             setState(() {
               selectedServiceType = serviceType;
+              // Reset entity type data when service type changes
+              entityType = null;
+              jshshir = null;
+              stir = null;
+              mfo = null;
             });
             // For now, both options proceed to material selection
             // You can add different logic for 'driver' later
             if (serviceType == 'material' || serviceType == 'driver') {
               showCustomLuggagesBottomSheet(context);
             }
+          },
+        );
+      },
+    );
+  }
+
+  void _showEntityTypeDialog(BuildContext context, StateSetter parentState) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EntityTypeDialog(
+          onContinue: (String selectedEntityType, String? jshshirValue, String? stirValue, String? mfoValue) {
+            setState(() {
+              entityType = selectedEntityType;
+              jshshir = jshshirValue;
+              stir = stirValue;
+              mfo = mfoValue;
+            });
+            // After entity type is selected, proceed to capacity selection
+            showCustomCapacityBottomSheet(context, parentState);
           },
         );
       },
@@ -1129,11 +1158,20 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                     lat: lat),
                 comment: "",
                 categoryUnit: activeIndex,
-                serviceType: selectedServiceType);
+                serviceType: selectedServiceType,
+                entityType: entityType,
+                jshshir: jshshir,
+                stir: stir,
+                mfo: mfo);
             print("PREORDER: ${dto.toJson()}");
             _bloc.add(PreOrderEvent(data: dto));
             selectedProduct = null;
             activeIndex = null;
+            // Reset entity type data after creating preorder
+            entityType = null;
+            jshshir = null;
+            stir = null;
+            mfo = null;
             // _closeSheet();
           }
         });
@@ -1243,7 +1281,13 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
       openSheet: (id, unit) => setState(() {
         selectedProduct = id;
         units = unit;
-        showCustomCapacityBottomSheet(context, setState);
+        // If service type is 'material', show entity type dialog first
+        if (selectedServiceType == 'material') {
+          _showEntityTypeDialog(context, setState);
+        } else {
+          // For 'driver', proceed directly to capacity selection
+          showCustomCapacityBottomSheet(context, setState);
+        }
       }),
       openInputSheet: () => showCustomInputBottomSheet(context, setState),
     );

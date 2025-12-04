@@ -56,7 +56,11 @@ class ServicesRepository {
         },
         "comment": data.comment,
         "category_unit": data.categoryUnit,
-        "service_type": data.serviceType
+        "service_type": data.serviceType,
+        if (data.entityType != null) "entity_type": data.entityType,
+        if (data.jshshir != null) "jshshir": data.jshshir,
+        if (data.stir != null) "stir": data.stir,
+        if (data.mfo != null) "mfo": data.mfo,
       };
       String token = await SharedPref().read('token') ?? '';
       print("RequestDATA: $jsonData");
