@@ -1,9 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logistic/constants/app_text_style.dart';
 import 'package:logistic/constants/colors.dart';
@@ -57,22 +54,27 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
               }
               if (state is HistorySuccessState) {
                 CustomLoadingDialog.hide(context);
-                items = state.data;
+                setState(() {
+                  items = state.data;
+                });
               }
             },
             builder: (context, state) {
               if (state is HistoryLoadingState){
                 return const Center(child: CupertinoActivityIndicator(color: AppColor.primary,radius: 30,));
               }  if (state is HistorySuccessState) {
+              // Ensure items are sorted by latest (updatedAt descending)
+              final sortedItems = List<History>.from(state.data)
+                ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
               return RefreshIndicator(
                 onRefresh: () async {
                   _bloc.add(const GetHistory());
                 },
-                child: items.isNotEmpty ? ListView.builder(
+                child: sortedItems.isNotEmpty ? ListView.builder(
                   itemBuilder: (BuildContext context, int index) {
-                    return orderItem(item:items[index]);
+                    return orderItem(item: sortedItems[index]);
                   },
-                  itemCount: items.length,
+                  itemCount: sortedItems.length,
                 ): Center(child: Container(child: const Text("Sizda hali hech qanday zakaz yo'q")),),
               ); }
               return Container();
@@ -110,24 +112,23 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      style: mediumBlack,
-                      children: <TextSpan>[
-                        TextSpan(text: categoryName),
-                        TextSpan(
-                          text: quantity,
-                          style: mediumBlack.copyWith(color: AppColor.primary),
-                        )
-                      ],
-                    ),
+              Expanded(
+                child: RichText(
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  text: TextSpan(
+                    style: mediumBlack,
+                    children: <TextSpan>[
+                      TextSpan(text: categoryName),
+                      TextSpan(
+                        text: quantity,
+                        style: mediumBlack.copyWith(color: AppColor.primary),
+                      )
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  // Text(Services.dateFormatter(item.updatedAt), style: mediumBlack),
-                ],
+                ),
               ),
+              const SizedBox(width: 10),
               Text(Services.getStatusString(item.status),
                   style: mediumBlack.copyWith(color: AppColor.primary)),
             ],
@@ -159,11 +160,17 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                item.address,
-                style: mediumBlack.copyWith(color: AppColor.secondaryText),
+              Expanded(
+                child: Text(
+                  item.address,
+                  style: mediumBlack.copyWith(color: AppColor.secondaryText),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
               ),
+              const SizedBox(width: 10),
               RichText(
                 text: TextSpan(
                   style: mediumBlack.copyWith(color: AppColor.secondaryText),

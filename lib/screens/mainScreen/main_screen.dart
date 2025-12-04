@@ -623,7 +623,7 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                             : GoogleMap(
                                 myLocationEnabled: true,
                                 zoomControlsEnabled: false,
-                                myLocationButtonEnabled: true,
+                                myLocationButtonEnabled: false,
                                 trafficEnabled: true,
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 60),
