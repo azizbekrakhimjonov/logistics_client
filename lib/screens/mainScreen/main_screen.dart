@@ -426,7 +426,32 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                       CustomLoadingDialog.show(context);
                     } else if (state is PreOrderSuccessState) {
                       CustomLoadingDialog.hide(context);
-                      pushToVehicle(id: state.id);
+                      // Reset entity type data after successful PreOrder creation
+                      entityType = null;
+                      jshshir = null;
+                      stir = null;
+                      mfo = null;
+                      
+                      // Check if it's a material order - show success dialog instead of driver selection
+                      if (selectedServiceType == 'material') {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext dialogContext) {
+                            return OrderSuccessDialog(
+                              onOk: () {
+                                // Close the dialog
+                                Navigator.of(dialogContext).pop();
+                                // Refresh the main screen data to show the new preorder
+                                _bloc.add(const GetUser());
+                              },
+                            );
+                          },
+                        );
+                      } else {
+                        // For driver orders, proceed to vehicle selection
+                        pushToVehicle(id: state.id);
+                      }
                     } else if (state is PreOrderErrorState) {
                       CustomLoadingDialog.hide(context);
                       final errorMessage = state.message.toString();
@@ -439,8 +464,17 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                               Duration(seconds: 3)) {
                         _lastShownError = errorMessage;
                         _lastErrorTime = now;
+                        // Extract a more user-friendly error message
+                        String displayMessage = errorMessage;
+                        if (errorMessage.contains("Entity type is required")) {
+                          displayMessage = "Yuridik shaxs turini tanlang";
+                        } else if (errorMessage.contains("JSHSHIR")) {
+                          displayMessage = "JSHSHIR raqamini kiriting";
+                        } else if (errorMessage.contains("STIR") || errorMessage.contains("МФО")) {
+                          displayMessage = "STIR va МФО raqamlarini kiriting";
+                        }
                         Services.showSnackBar(
-                            context, errorMessage, AppColor.red);
+                            context, displayMessage, AppColor.red);
                       }
                     } else {
                       CustomLoadingDialog.hide(context);
@@ -1150,6 +1184,31 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
         activeIndex: activeIndex,
         onDone: () {
           if (activeIndex != null) {
+            // Validate entity type data for material service type
+            if (selectedServiceType == 'material') {
+              if (entityType == null) {
+                Services.showSnackBar(
+                    context, 
+                    "Iltimos, yuridik shaxs turini tanlang", 
+                    AppColor.errorRed);
+                return;
+              }
+              if (entityType == 'individual' && (jshshir == null || jshshir!.trim().isEmpty)) {
+                Services.showSnackBar(
+                    context, 
+                    "Iltimos, JSHSHIR raqamini kiriting", 
+                    AppColor.errorRed);
+                return;
+              }
+              if (entityType == 'legal' && ((stir == null || stir!.trim().isEmpty) || (mfo == null || mfo!.trim().isEmpty))) {
+                Services.showSnackBar(
+                    context, 
+                    "Iltimos, STIR va МФО raqamlarini kiriting", 
+                    AppColor.errorRed);
+                return;
+              }
+            }
+            
             var dto = PreOrder(
                 address: Address(
                     id: selectedAddressId,
@@ -1163,16 +1222,11 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                 jshshir: jshshir,
                 stir: stir,
                 mfo: mfo);
-            print("PREORDER: ${dto.toJson()}");
+            print("PREORDER DTO: ${dto.toJson()}");
             _bloc.add(PreOrderEvent(data: dto));
             selectedProduct = null;
             activeIndex = null;
-            // Reset entity type data after creating preorder
-            entityType = null;
-            jshshir = null;
-            stir = null;
-            mfo = null;
-            // _closeSheet();
+            // Don't reset entity type data here - wait until PreOrder is successfully created
           }
         });
   }

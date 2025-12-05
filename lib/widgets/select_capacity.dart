@@ -114,13 +114,11 @@ class SelectCapacity extends StatelessWidget {
                     disable: activeIndex == null,
                     title: "Tayyor",
                     onPress: () {
-                      onDone();
-                      // if (activeIndex != 0) {
-                      //   Navigator.pushNamed(
-                      //       context, Routes.vehiclechoose);
-                      //   _closeCapacitySheet();
-                      //   _closeSheet();
-                      // }
+                      if (activeIndex != null) {
+                        onDone();
+                        // Close the modal after calling onDone
+                        Navigator.pop(context);
+                      }
                     },
                   )
                 ],

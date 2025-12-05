@@ -77,19 +77,50 @@ class ServicesRepository {
             // contentType: Headers.formUrlEncodedContentType,
           ) // await HeaderOptions().option(),
           );
-      print("REquest: ${response.data}");
+      print("Response Status: ${response.statusCode}");
+      print("Response Data: ${response.data}");
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return response.data["id"];
+        if (response.data != null && response.data is Map && response.data.containsKey("id")) {
+          return response.data["id"];
+        } else {
+          print("ERROR: Response data is invalid: ${response.data}");
+          throw Exception("Invalid response from server: PreOrder ID not found");
+        }
       } else {
-        return [];
+        print("ERROR: Unexpected status code: ${response.statusCode}");
+        throw Exception("Failed to create PreOrder: Status ${response.statusCode}");
       }
     } on DioException catch (e) {
-      print("ERR:${e.message} ${e.response}");
-      print("ERROR:${e.response}");
+      print("DioException: ${e.message}");
+      print("Response: ${e.response?.data}");
+      print("Status Code: ${e.response?.statusCode}");
+      
+      String errorMessage = "Failed to create order";
+      if (e.response != null && e.response!.data != null) {
+        if (e.response!.data is Map) {
+          // Try to extract error message from response
+          var errorData = e.response!.data as Map;
+          if (errorData.containsKey("message")) {
+            errorMessage = errorData["message"].toString();
+          } else if (errorData.containsKey("error")) {
+            errorMessage = errorData["error"].toString();
+          } else if (errorData.containsKey("detail")) {
+            errorMessage = errorData["detail"].toString();
+          } else {
+            errorMessage = errorData.toString();
+          }
+        } else {
+          errorMessage = e.response!.data.toString();
+        }
+      } else {
+        errorMessage = DioExceptions.fromDioError(e).toString();
+      }
 
-      final errorMessage = DioExceptions.fromDioError(e).toString();
-
+      print("Final Error Message: $errorMessage");
       throw errorMessage;
+    } catch (e) {
+      print("Unexpected error: $e");
+      throw Exception("Unexpected error: $e");
     }
   }
 

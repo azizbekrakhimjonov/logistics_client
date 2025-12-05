@@ -23,7 +23,23 @@ class _EntityTypeDialogState extends State<EntityTypeDialog> {
   final TextEditingController _mfoController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Listen to text changes to update button state
+    _jshshirController.addListener(_onTextChanged);
+    _stirController.addListener(_onTextChanged);
+    _mfoController.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    setState(() {}); // Trigger rebuild to update button state
+  }
+
+  @override
   void dispose() {
+    _jshshirController.removeListener(_onTextChanged);
+    _stirController.removeListener(_onTextChanged);
+    _mfoController.removeListener(_onTextChanged);
     _jshshirController.dispose();
     _stirController.dispose();
     _mfoController.dispose();
@@ -112,7 +128,7 @@ class _EntityTypeDialogState extends State<EntityTypeDialog> {
                 InputField(
                   title: "JSHSHIR",
                   value: _jshshirController,
-                  onChange: (value) => setState(() {}),
+                  onChange: (value) {}, // InputField doesn't use this, we use listener instead
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'JSHSHIR kiriting';
@@ -127,7 +143,7 @@ class _EntityTypeDialogState extends State<EntityTypeDialog> {
                 InputField(
                   title: "STIR",
                   value: _stirController,
-                  onChange: (value) => setState(() {}),
+                  onChange: (value) {}, // InputField doesn't use this, we use listener instead
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'STIR kiriting';
@@ -142,7 +158,7 @@ class _EntityTypeDialogState extends State<EntityTypeDialog> {
                 InputField(
                   title: "МФО",
                   value: _mfoController,
-                  onChange: (value) => setState(() {}),
+                  onChange: (value) {}, // InputField doesn't use this, we use listener instead
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'МФО kiriting';
