@@ -11,9 +11,10 @@ class InputField extends StatefulWidget {
   final bool icon;
   final TextEditingController value;
   final TextInputType keyboardType;
-  final bool phone; 
+  final bool phone;
   final int maxLength;
   final String hint;
+  final TextStyle? hintStyle;
   final double radius;
   final bool readOnly;
 
@@ -28,9 +29,9 @@ class InputField extends StatefulWidget {
       this.icon = false,
       required this.maxLength,
       this.hint = '',
+      this.hintStyle,
       this.radius = 8.0,
-      this.readOnly = false
-      });
+      this.readOnly = false});
 
   @override
   State<InputField> createState() => _InputFieldState();
@@ -44,64 +45,68 @@ class _InputFieldState extends State<InputField> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        widget.title.isNotEmpty ? Container(
-          padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 10),
-          child: Text(
-            widget.title,
-            style: TextStyle(
-              color: AppColor.black.withOpacity(0.5),
-              fontFamily: AppFont.StemMedium,
-              fontSize: 16,
-            ),
-            // textAlign: TextAlign.start,
-          ),
-        ):Container(),
+        widget.title.isNotEmpty
+            ? Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 3, vertical: 10),
+                child: Text(
+                  widget.title,
+                  style: TextStyle(
+                    color: AppColor.black.withOpacity(0.5),
+                    fontFamily: AppFont.StemMedium,
+                    fontSize: 16,
+                  ),
+                  // textAlign: TextAlign.start,
+                ),
+              )
+            : Container(),
         Container(
           child: TextFormField(
             readOnly: widget.readOnly,
             controller: widget.value,
             obscureText: widget.icon ? hidden : !hidden,
-            inputFormatters: widget.phone?<TextInputFormatter>[
-                      LengthLimitingTextInputFormatter(widget.maxLength),
+            inputFormatters: widget.phone
+                ? <TextInputFormatter>[
+                    LengthLimitingTextInputFormatter(widget.maxLength),
 
-              // FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-              FilteringTextInputFormatter.allow(RegExp("[0-9 ]")),
-MaskedTextInputFormatter(
-mask: '000 XX XXX XX XX',
-separator: " ",)
-            ]:<TextInputFormatter>[
-              
-            ],
+                    // FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    FilteringTextInputFormatter.allow(RegExp("[0-9 ]")),
+                    MaskedTextInputFormatter(
+                      mask: '000 XX XXX XX XX',
+                      separator: " ",
+                    )
+                  ]
+                : <TextInputFormatter>[],
             keyboardType: widget.keyboardType,
-             decoration: InputDecoration(
-            counterText: '',
-            labelText: widget.hint,
-            floatingLabelBehavior: FloatingLabelBehavior.never,
-            focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color: AppColor.primary.withOpacity(0.5), width: 1.0),
-                borderRadius: BorderRadius.circular(widget.radius)),
-            border: OutlineInputBorder(
-                borderSide: BorderSide(),
-                borderRadius: BorderRadius.circular(widget.radius)),
-            enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: AppColor.secondaryText.withOpacity(0.2),
-                ),
-                borderRadius: BorderRadius.circular(widget.radius)),
-            errorBorder: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: AppColor.red.withOpacity(0.2), width: 1),
-                borderRadius: BorderRadius.circular(widget.radius)),
-            focusColor: AppColor.primary),
+            decoration: InputDecoration(
+                counterText: '',
+                labelText: widget.hint,
+                labelStyle: widget.hintStyle,
+                floatingLabelBehavior: FloatingLabelBehavior.never,
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: AppColor.primary.withOpacity(0.5), width: 1.0),
+                    borderRadius: BorderRadius.circular(widget.radius)),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(),
+                    borderRadius: BorderRadius.circular(widget.radius)),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColor.secondaryText.withOpacity(0.2),
+                    ),
+                    borderRadius: BorderRadius.circular(widget.radius)),
+                errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: AppColor.red.withOpacity(0.2), width: 1),
+                    borderRadius: BorderRadius.circular(widget.radius)),
+                focusColor: AppColor.primary),
             style: TextStyle(fontSize: 14, fontFamily: AppFont.StemRegular),
             cursorColor: AppColor.primary,
             validator: widget.validator,
-            onChanged: (value){},// (value) => widget.onChange(value),
+            onChanged: (value) {}, // (value) => widget.onChange(value),
             maxLength: widget.maxLength,
             // maxLengthEnforcement: MaxLengthEnforcement.none
             // ,
-
           ),
         ),
       ]),

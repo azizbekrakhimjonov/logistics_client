@@ -207,7 +207,7 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
                     height: 50,
                     child: DefaultButton(
                         disable: false,
-                        title: "Tayyor",
+                        title: "ready".tr(),
                         onPress: () {
                           _openDetailSheet();
                         }),

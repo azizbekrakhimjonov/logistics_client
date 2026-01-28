@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import '/utils/shared_pref.dart';
 
 class HeaderOptions {
-  static String uri = "https://airvive.coded.uz/";
+  static String uri = "https://yuktashish.coded.uz/";
   
   static BaseOptions options = BaseOptions(
     baseUrl: uri,

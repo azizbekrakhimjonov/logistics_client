@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import '/utils/shared_pref.dart';
 
 class AuthService {
-  static String uri = "https://airvive.coded.uz/";
+  static String uri = "https://yuktashish.coded.uz/";
   
 
   static BaseOptions options = BaseOptions(

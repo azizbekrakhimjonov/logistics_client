@@ -58,7 +58,7 @@ class SelectLuggages extends StatelessWidget {
                   ],
                 ),
                 // SizedBox(height: ),
-                Text("Sizga qanday xom ashyo kerak?", style: boldBlack),
+                Text("what_raw_material_need".tr(), style: boldBlack),
                 Expanded(
                   child: GridView.builder(
                     controller: scrollController,
@@ -149,9 +149,7 @@ class SelectLuggages extends StatelessWidget {
                           ),
                           SizedBox(height: 9),
                           Text(
-                            "Boshqa xom ashyo kiritish",
-                            // Services.translate(context.locale.toString(),
-                            //     item.nameUz, item.nameRu),
+                            "enter_other_raw_material".tr(),
                             maxLines: 2,
                             textAlign: TextAlign.center,
                             style: mediumBlack.copyWith(fontSize: 12),

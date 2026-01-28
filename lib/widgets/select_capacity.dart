@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logistic/widgets/button.dart';
@@ -35,8 +36,7 @@ class SelectCapacity extends StatelessWidget {
         return Container(
             decoration: const BoxDecoration(
               color: Colors.white,
-              borderRadius:
-                  BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             ),
             // padding: EdgeInsets.symmetric(horizontal: 35, vertical: 25),
             child: SingleChildScrollView(
@@ -56,12 +56,12 @@ class SelectCapacity extends StatelessWidget {
                     ],
                   ),
 
-                  Text("Sement",
+                  Text("add_raw_material".tr(),
                       style: mediumBlack.copyWith(fontSize: 20)),
                   const SizedBox(height: 5),
-                  Text("Miqdorni tanlang",
-                      style: lightBlack.copyWith(
-                          color: AppColor.secondaryText)),
+                  Text("select_quantity".tr(),
+                      style:
+                          lightBlack.copyWith(color: AppColor.secondaryText)),
                   const SizedBox(height: 25),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -80,13 +80,13 @@ class SelectCapacity extends StatelessWidget {
                               child: Container(
                                 height: 60,
                                 // width: 50,
-                                padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
                                 decoration: BoxDecoration(
                                     color: item == activeIndex
                                         ? AppColor.primary
                                         : AppColor.gray,
-                                    borderRadius:
-                                        BorderRadius.circular(10)),
+                                    borderRadius: BorderRadius.circular(10)),
                                 child: Center(
                                     child: Text(
                                   "${Services.moneyFormat(e.quantity.toString())} ${e.unit}",
@@ -101,8 +101,7 @@ class SelectCapacity extends StatelessWidget {
                             Text(
                               "${Services.moneyFormat(e.priceFrom.toString())} / \n ${Services.moneyFormat(e.priceTo.toString())}",
                               style: regularText.copyWith(
-                                  fontSize: 12,
-                                  color: AppColor.secondaryText),
+                                  fontSize: 12, color: AppColor.secondaryText),
                             )
                           ]),
                         );
@@ -112,7 +111,7 @@ class SelectCapacity extends StatelessWidget {
                   const SizedBox(height: 35),
                   DefaultButton(
                     disable: activeIndex == null,
-                    title: "Tayyor",
+                    title: "ready".tr(),
                     onPress: () {
                       onDone();
                       // if (activeIndex != 0) {

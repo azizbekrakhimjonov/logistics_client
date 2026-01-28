@@ -28,6 +28,21 @@ class _InputSheetState extends State<InputSheet> {
   final _controller = DraggableScrollableController();
   var keyboardSize = 0.0;
 
+  void _onCommentChanged() => setState(() {});
+
+  @override
+  void initState() {
+    super.initState();
+    _comment.addListener(_onCommentChanged);
+  }
+
+  @override
+  void dispose() {
+    _comment.removeListener(_onCommentChanged);
+    _comment.dispose();
+    super.dispose();
+  }
+
   @override
   void didUpdateWidget(covariant InputSheet oldWidget) {
     keyboardSize = MediaQuery.of(context).viewInsets.bottom /
@@ -51,13 +66,11 @@ class _InputSheetState extends State<InputSheet> {
           maxChildSize: 0.9,
           snap: false,
           // snapSizes: const [0.7],
-          builder:
-              (BuildContext context, ScrollController scrollController) {
+          builder: (BuildContext context, ScrollController scrollController) {
             return Container(
                 decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                 ),
                 // padding: EdgeInsets.symmetric(horizontal: 35, vertical: 25),
                 child: SingleChildScrollView(
@@ -75,23 +88,21 @@ class _InputSheetState extends State<InputSheet> {
                               onPressed: () {
                                 widget.closeSheet();
                                 Navigator.pop(context);
-                                FocusScope.of(context)
-                                    .requestFocus(focusNode);
+                                FocusScope.of(context).requestFocus(focusNode);
                               },
                               icon: const Icon(Icons.close)),
                         ],
                       ),
 
-                      Text("Sement",
+                      Text("add_raw_material".tr(),
                           style: mediumBlack.copyWith(fontSize: 20)),
                       const SizedBox(height: 5),
-                      Text("Miqdorni tanlang",
+                      Text("select_quantity".tr(),
                           style: lightBlack.copyWith(
                               color: AppColor.secondaryText)),
                       const SizedBox(height: 25),
                       Padding(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 21.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 21.0),
                         child: InputField(
                           title: "", //"name".tr(),
                           value: _comment,
@@ -103,13 +114,18 @@ class _InputSheetState extends State<InputSheet> {
                             return null;
                           },
                           maxLength: 25,
-                          hint: "e.g Cement, 100kg",
+                          hint: "hint_example_cement".tr(),
+                          hintStyle: TextStyle(
+                            color: AppColor.secondaryText,
+                            fontFamily: AppFont.StemRegular,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 35),
                       DefaultButton(
                         disable: _comment.text.isEmpty,
-                        title: "Tayyor",
+                        title: "ready".tr(),
                         onPress: () {
                           // _controller.jumpTo(size)
                           if (_comment.text.isNotEmpty) {

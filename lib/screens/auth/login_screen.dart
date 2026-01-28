@@ -51,7 +51,22 @@ class _LoginScreenState extends State<LoginScreen> {
                             repeat: ImageRepeat.repeatX)),
                     height: MediaQuery.sizeOf(context).height / 2,
                     width: double.infinity,
-                    child: Container()),
+                    child: SafeArea(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 20),
+                          child: Text(
+                            "app_name_client".tr(),
+                            style: TextStyle(
+                              color: AppColor.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )),
                 Container(
                   // height: double.infinity,
                   width: double.infinity,

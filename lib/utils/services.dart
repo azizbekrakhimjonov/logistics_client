@@ -23,11 +23,16 @@ class Services {
      
   }
 
-  static void showSnackBar(BuildContext context, dynamic message,Color color) {
+  static void showSnackBar(BuildContext context, dynamic message, Color color) {
+    var text = (message?.toString() ?? '').replaceAll("Exception:", "").trim();
+    if (text.isEmpty) text = 'Something went wrong';
+    if (text.length > 80 || text.contains('<')) text = 'Internal server error';
     final snackBar = SnackBar(
-      content: Text(message.replaceAll("Exception:", "")).tr(),
+      content: Text(text).tr(),
       backgroundColor: color,
-    
+      behavior: SnackBarBehavior.floating,
+      margin: const EdgeInsets.all(8),
+      duration: const Duration(seconds: 3),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

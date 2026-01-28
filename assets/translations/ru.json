@@ -39,6 +39,13 @@
     "Gallareyadan":"Из галереи",
     "phone":"Номер телефона",
     "save":"Сохранить",
-    "pay":"Оплатить"
-
+    "pay":"Оплатить",
+    "add_raw_material": "Добавить сырьё",
+    "hint_example_cement": "Например: Цемент, 100кг",
+    "select_quantity": "Выберите количество",
+    "ready": "Готово",
+    "please_wait": "Подождите...",
+    "what_raw_material_need": "Какое сырьё вам нужно?",
+    "enter_other_raw_material": "Ввести другое сырьё",
+    "app_name_client": "Yuktashish Client"
 }

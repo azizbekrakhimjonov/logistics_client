@@ -8,24 +8,31 @@ class DefaultButton extends StatelessWidget {
   final String title;
   final Function onPress;
 
-  const DefaultButton({super.key, required this.disable,required this.title,required this.onPress,});
+  const DefaultButton({
+    super.key,
+    required this.disable,
+    required this.title,
+    required this.onPress,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => onPress(),
+      onTap: disable ? null : () => onPress(),
       child: Container(
           width: 160,
-          // height: 35,
           padding: EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: disable ? AppColor.gray : AppColor.primary,
+            color: disable ? AppColor.disableColor : AppColor.primary,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Center(
               child: Text(
             title,
-            style: boldBlack.copyWith(fontSize: 20, color: AppColor.white),
+            style: boldBlack.copyWith(
+              fontSize: 20,
+              color: disable ? AppColor.secondaryText : AppColor.white,
+            ),
           ))),
     );
   }

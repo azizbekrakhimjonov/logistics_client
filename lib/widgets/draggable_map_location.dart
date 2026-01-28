@@ -99,7 +99,7 @@ class DraggableMapLocation extends StatelessWidget {
                     
                     
                     SizedBox(height: 25),
-                    DefaultButton(title: "Tayyor", onPress: () => openSheet(),disable: false)
+                    DefaultButton(title: "ready".tr(), onPress: () => openSheet(),disable: false)
                     //  TextButton(
                     //     onPressed: () => openSheet(), child: Text("send").tr()),
                   ],

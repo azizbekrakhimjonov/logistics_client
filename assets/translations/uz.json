@@ -40,8 +40,14 @@
     "Gallareyadan":"Gallareyadan",
     "phone":"Telefon raqam",
     "save": "Saqlash",
-    "pay": "To'lash"
-
-    
+    "pay": "To'lash",
+    "add_raw_material": "Hom ashyo qo'shish",
+    "hint_example_cement": "Masalan: Sement, 100kg",
+    "select_quantity": "Miqdorni tanlang",
+    "ready": "Tayyor",
+    "please_wait": "Kuting...",
+    "what_raw_material_need": "Sizga qanday xom ashyo kerak?",
+    "enter_other_raw_material": "Boshqa xom ashyo kiritish",
+    "app_name_client": "Yuktashish Client"
 
 }

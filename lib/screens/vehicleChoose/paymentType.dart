@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logistic/models/payment.dart';
@@ -167,7 +168,7 @@ class _PaymentTypeState extends State<PaymentType> {
                         const SizedBox(height: 35),
                         DefaultButton(
                           disable: selectedId == 0 || _isLoading,
-                          title: _isLoading ? "Kuting..." : "Tayyor",
+                          title: _isLoading ? "please_wait".tr() : "ready".tr(),
                           onPress: () {
                             _createOrder();
                           },

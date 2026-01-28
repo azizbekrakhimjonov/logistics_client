@@ -22,12 +22,8 @@ class AppColor {
   static const Color orange = Color(0xFFE2B44E);
   static const Color lightGreen = Color(0xFF24B544);
 
-
   static const Color secondaryText = Color(0xFF979797);
   static const Color grayBackground = Color(0xFFF8F8F8);
   static const Color disableColor = Color(0xFFC6C6C6);
-
-
-  
 }
 // CDB179
