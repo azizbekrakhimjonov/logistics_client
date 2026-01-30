@@ -1,0 +1,7 @@
+# Release imzolash uchun. Bu faylni key.properties deb nusxalang va qiymatlarni to'ldiring.
+# key.properties va *.jks fayllarini Git ga commit qilmang (android/.gitignore da qo'yilgan).
+
+storePassword=parolingiz
+keyPassword=parolingiz
+keyAlias=upload
+storeFile=../upload-keystore.jks

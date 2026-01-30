@@ -1,4 +1,4 @@
-package com.example.logistics_client;
+package com.yuktashish.client;
 
 import io.flutter.embedding.android.FlutterActivity;
 

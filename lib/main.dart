@@ -1,4 +1,5 @@
 // import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
@@ -36,7 +37,7 @@ class MyBlocObserver extends BlocObserver {
   @override
   void onChange(BlocBase bloc, Change change) {
     super.onChange(bloc, change);
-    print('onChange -- ${bloc.runtimeType}, $change');
+    if (kDebugMode) print('onChange -- ${bloc.runtimeType}, $change');
   }
 
   @override
@@ -47,7 +48,7 @@ class MyBlocObserver extends BlocObserver {
 
   @override
   void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
-    print('onError -- ${bloc.runtimeType}, $error');
+    if (kDebugMode) print('onError -- ${bloc.runtimeType}, $error');
     super.onError(bloc, error, stackTrace);
   }
 
@@ -71,7 +72,7 @@ Future<void> main() async {
     // statusBarIconBrightness: Brightness.dark // dark text for status bar
   ));
   var token = await SharedPref().read('token') ?? '';
-  print("Token.: ${token}");
+  if (kDebugMode) print("Token.: ${token}");
   if (token.isEmpty) {
     initialRoute = Routes.login;
   } else {
@@ -100,7 +101,7 @@ Future<void> main() async {
         //  MyApp(initialRoute: initialRoute)
       );
     },
-    blocObserver: MyBlocObserver(),
+    blocObserver: kDebugMode ? MyBlocObserver() : null,
   );
 }
 
