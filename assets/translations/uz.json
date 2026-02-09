@@ -48,6 +48,8 @@
     "please_wait": "Kuting...",
     "what_raw_material_need": "Sizga qanday xom ashyo kerak?",
     "enter_other_raw_material": "Boshqa xom ashyo kiritish",
-    "app_name_client": "Yuktashish Client"
-
+    "app_name_client": "Yuktashish Client",
+    "server_error": "Server ishlamayapti",
+    "server_error_description": "Ilova serverga ulana olmadi. Internetingizni tekshiring yoki keyinroq urinib ko'ring.",
+    "retry": "Qayta urinish"
 }

@@ -12,6 +12,8 @@ import 'constants/app_theme.dart';
 import 'generated/codegen_loader.g.dart';
 import 'routes.dart';
 import 'di/locator.dart';
+import 'screens/error/server_error_page.dart';
+import 'utils/health_service.dart';
 import 'utils/navigation_services.dart';
 import 'utils/shared_pref.dart';
 
@@ -71,6 +73,7 @@ Future<void> main() async {
     statusBarBrightness: Brightness.light,
     // statusBarIconBrightness: Brightness.dark // dark text for status bar
   ));
+  final serverHealthy = await HealthService.check();
   var token = await SharedPref().read('token') ?? '';
   if (kDebugMode) print("Token.: ${token}");
   if (token.isEmpty) {
@@ -78,9 +81,6 @@ Future<void> main() async {
   } else {
     initialRoute = Routes.mainScreen;
   }
-  // SharedPref().save("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk3NzMzODk3LCJpYXQiOjE2NzE4MTM4OTcsImp0aSI6ImQxOTQxNGY5MGFhMzQ4ZGZiMDQ0ZWRiNWY1NmQyODlmIiwidXNlcl9pZCI6ImZhZjQwMjg0LTk0NWItNGMxMC1hZThjLWU4ODFiOGVlN2ViMiJ9.Latbqz8crhssbwIOki39G8wNf8pTlsxsnH129vZp6EM");
-  // SharedPref().save("user", "3ebba04d-1713-45bf-888a-5d733e4aaf85");
-  // await _getId();
   // ignore: deprecated_member_use
   BlocOverrides.runZoned(
     () {
@@ -90,15 +90,14 @@ Future<void> main() async {
             Locale('ru'),
             Locale('uz'),
           ],
-          path:
-              'assets/translations', // <-- change the path of the translation files
+          path: 'assets/translations',
           fallbackLocale: const Locale('ru'),
           startLocale: const Locale('ru'),
           assetLoader: const CodegenLoader(),
           useOnlyLangCode: true,
-          child: MyApp(initialRoute: initialRoute),
+          child:
+              MyApp(initialRoute: initialRoute, serverHealthy: serverHealthy),
         ),
-        //  MyApp(initialRoute: initialRoute)
       );
     },
     blocObserver: kDebugMode ? MyBlocObserver() : null,
@@ -107,17 +106,22 @@ Future<void> main() async {
 
 class MyApp extends StatefulWidget {
   final dynamic initialRoute;
+  final bool serverHealthy;
 
-  const MyApp({Key? key, this.initialRoute}) : super(key: key);
+  const MyApp({Key? key, this.initialRoute, this.serverHealthy = true})
+      : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
+  late bool _serverHealthy;
+
   @override
   void initState() {
     super.initState();
+    _serverHealthy = widget.serverHealthy;
     initialization();
   }
 
@@ -125,26 +129,39 @@ class _MyAppState extends State<MyApp> {
     FlutterNativeSplash.remove();
   }
 
+  Future<void> _retryHealth() async {
+    final ok = await HealthService.check();
+    if (ok && mounted) {
+      setState(() => _serverHealthy = true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: AppColor.primary, // transparent status bar
+      statusBarColor: AppColor.primary,
       statusBarBrightness: Brightness.light,
-      // statusBarIconBrightness: Brightness.dark // dark text for status bar
     ));
-    return MaterialApp(
-        // useInheritedMediaQuery: true,
+    if (!_serverHealthy) {
+      return MaterialApp(
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
         locale: context.locale,
         debugShowCheckedModeBanner: false,
-        // builder: DevicePreview.appBuilder,
+        theme: themeData,
+        home: ServerErrorPage(onRetry: _retryHealth),
+      );
+    }
+    return MaterialApp(
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+        debugShowCheckedModeBanner: false,
         theme: themeData,
         scaffoldMessengerKey: snackBarKey,
         navigatorObservers: [routeObserver],
-        initialRoute: widget.initialRoute, //Routes.mainScreen,
+        initialRoute: widget.initialRoute,
         routes: Routes.routes,
         navigatorKey: NavigationService.instance.navigationKey);
-    // navigatorKey: NavigationService.instance.navigationKey);
   }
 }

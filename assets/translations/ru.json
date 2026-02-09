@@ -47,5 +47,8 @@
     "please_wait": "Подождите...",
     "what_raw_material_need": "Какое сырьё вам нужно?",
     "enter_other_raw_material": "Ввести другое сырьё",
-    "app_name_client": "Yuktashish Client"
+    "app_name_client": "Yuktashish Client",
+    "server_error": "Сервер недоступен",
+    "server_error_description": "Не удалось подключиться к серверу. Проверьте интернет или попробуйте позже.",
+    "retry": "Повторить"
 }

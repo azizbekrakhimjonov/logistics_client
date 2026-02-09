@@ -65,7 +65,11 @@ class CodegenLoader extends AssetLoader {
     "please_wait": "Подождите...",
     "what_raw_material_need": "Какое сырьё вам нужно?",
     "enter_other_raw_material": "Ввести другое сырьё",
-    "app_name_client": "Yuktashish Client"
+    "app_name_client": "Yuktashish Client",
+    "server_error": "Сервер недоступен",
+    "server_error_description":
+        "Не удалось подключиться к серверу. Проверьте интернет или попробуйте позже.",
+    "retry": "Повторить"
   };
   static const Map<String, dynamic> uz = {
     "enter": "Kirish",
@@ -119,7 +123,11 @@ class CodegenLoader extends AssetLoader {
     "please_wait": "Kuting...",
     "what_raw_material_need": "Sizga qanday xom ashyo kerak?",
     "enter_other_raw_material": "Boshqa xom ashyo kiritish",
-    "app_name_client": "Yuktashish Client"
+    "app_name_client": "Yuktashish Client",
+    "server_error": "Server ishlamayapti",
+    "server_error_description":
+        "Ilova serverga ulana olmadi. Internetingizni tekshiring yoki keyinroq urinib ko'ring.",
+    "retry": "Qayta urinish"
   };
   static const Map<String, Map<String, dynamic>> mapLocales = {
     "ru": ru,
