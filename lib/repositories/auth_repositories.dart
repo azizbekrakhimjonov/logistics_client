@@ -92,9 +92,9 @@ class AuthRepository {
       );
 
       if (response.statusCode == 200) {
-        User data = User.fromJson(response.data);
-        await SharedPref().save('user', data);
-        
+        User data = User.fromJson(response.data is Map ? response.data as Map<String, dynamic> : {});
+        await SharedPref().save('user', data.toJson());
+
         return data;
       } else {
         return [];
@@ -116,9 +116,11 @@ class AuthRepository {
       );
 
       if (response.statusCode == 200) {
-         print("RESPOMSE: ${response.data}");
-        UserContent data = UserContent.fromJson(response.data);
-        await SharedPref().save("user", data);
+        print("RESPOMSE: ${response.data}");
+        final raw = response.data;
+        final jsonMap = raw is Map<String, dynamic> ? raw : <String, dynamic>{};
+        UserContent data = UserContent.fromJson(jsonMap);
+        await SharedPref().save("user", data.toJson());
         // dynamic user = await SharedPref().read("user");
 
          print("RESPOMSE: ${data}");

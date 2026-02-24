@@ -40,7 +40,7 @@ class _MainDrawerState extends State<MainDrawer> {
     print("object");
     dynamic user = await SharedPref().read("user");
     setState(() {
-      userData = UserContent.fromJson(user);
+      userData = UserContent.fromJsonSafe(user);
       debugPrint("userData: ${userData}");
     });
   }

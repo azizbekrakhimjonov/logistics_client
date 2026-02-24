@@ -867,8 +867,12 @@ void clearData() {
           });
         },
         activeIndex: activeIndex,
-        onDone: () {
+        onDone: () async {
           if (activeIndex != null) {
+            final j = await SharedPref().read('jshshir');
+            final jshshir = j is String ? j : null;
+            final hasJshshir = jshshir != null && jshshir.trim().isNotEmpty;
+            // main_yuk kabi: material uchun entityType va jshshir yuboriladi
             var dto = PreOrder(
                 address: Address(
                     id: selectedAddressId,
@@ -876,7 +880,10 @@ void clearData() {
                     long: long,
                     lat: lat),
                 comment: "",
-                categoryUnit: activeIndex);
+                categoryUnit: activeIndex,
+                serviceType: 'material',
+                entityType: hasJshshir ? 'individual' : null,
+                jshshir: hasJshshir ? jshshir.trim() : null);
             print("PREORDER: ${dto.toJson()}");
             _bloc.add(PreOrderEvent(data: dto));
               selectedProduct = null;
@@ -923,7 +930,11 @@ void clearData() {
               activeIndex = null;
               parentState(() {});
         }),
-        onDone: (comment) {
+        onDone: (comment) async {
+          // Backend material uchun entity_type va (individual bo'lsa) jshshir talab qiladi — Account dan o‘qiladi
+          final j = await SharedPref().read('jshshir');
+          final jshshir = j is String ? j : null;
+          final hasJshshir = jshshir != null && jshshir.trim().isNotEmpty;
           var dto = PreOrder(
               address: Address(
                   id: selectedAddressId,
@@ -931,7 +942,10 @@ void clearData() {
                   long: long,
                   lat: lat),
               comment: comment,
-              categoryUnit: null);
+              categoryUnit: null,
+              serviceType: 'material',
+              entityType: 'individual',
+              jshshir: hasJshshir ? jshshir.trim() : null);
           print("PREORDER: ${dto.toJson()}");
           _bloc.add(PreOrderEvent(data: dto));
               selectedProduct = null;

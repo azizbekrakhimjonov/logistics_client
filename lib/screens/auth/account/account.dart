@@ -30,6 +30,7 @@ class AccountAppBar extends StatefulWidget {
 class _AccountAppBarState extends State<AccountAppBar> {
   final _username = TextEditingController(text: "");
   final _phone = TextEditingController();
+  final _jshshir = TextEditingController(text: "");
   FocusNode focusNode = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late UserContent userData;
@@ -44,10 +45,12 @@ class _AccountAppBarState extends State<AccountAppBar> {
 
   void getUser() async {
     dynamic user = await SharedPref().read("user");
+    dynamic j = await SharedPref().read("jshshir");
     setState(() {
-      userData = UserContent.fromJson(user);
+      userData = UserContent.fromJsonSafe(user);
       _username.text = userData.user.name ?? "";
       _phone.text = userData.user.username;
+      _jshshir.text = j is String ? j : "";
     });
     print("phone:${_phone.text}");
   }
@@ -81,6 +84,9 @@ class _AccountAppBarState extends State<AccountAppBar> {
                    CustomLoadingDialog.show(context);
                  } else if (state is AccountSuccessState) {
                    CustomLoadingDialog.hide(context);
+                   final savedMsg = Services.translate(
+                       context.locale.toString(), "Saqlandi", "Сохранено");
+                   Services.showSnackBar(context, savedMsg, AppColor.lightGreen);
                  } else if (state is AccountErrorState){
                    CustomLoadingDialog.hide(context);
                    Services.showSnackBar(context, state.message, AppColor.red);
@@ -147,6 +153,20 @@ class _AccountAppBarState extends State<AccountAppBar> {
                                   readOnly: true,
                                 ),
                               ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 21.0),
+                                child: InputField(
+                                  title: "JSHSHIR",
+                                  value: _jshshir,
+                                  onChange: () {},
+                                  validator: (value) => null,
+                                  keyboardType: TextInputType.number,
+                                  maxLength: 14,
+                                  hint: "00000000000000",
+                                  radius: 17,
+                                ),
+                              ),
                             ]),
                           ),
                         ),
@@ -163,7 +183,8 @@ class _AccountAppBarState extends State<AccountAppBar> {
             child: DefaultButton(
                 disable: false,
                 title: "save".tr(),
-                onPress: () {
+                onPress: () async {
+                  await SharedPref().save('jshshir', _jshshir.text);
                   _bloc.add(EditProfileEvent(
                       photo: imageFile?.path ?? '',
                       name: _username.text,

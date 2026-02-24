@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logistic/models/active_order.dart';
 import 'package:logistic/models/order.dart';
@@ -13,6 +14,7 @@ import 'package:logistic/utils/header_options.dart';
 import '../constants/endpoints.dart';
 // ignore: library_prefixes
 import '../models/category.dart' as Model;
+import '../utils/app_logger.dart';
 import '../utils/exceptions.dart';
 import '../utils/shared_pref.dart';
 
@@ -45,46 +47,104 @@ class ServicesRepository {
   }
 
   Future<dynamic> preOrder(PreOrder data) async {
-    try {
-      print("Request: ${json.encode(data)}");
-      var jsonData = {
-        "address": {
-          // "id": null,
-          "name": data.address.name,
-          "long": data.address.long,
-          "lat": data.address.lat
-        },
-        "comment": data.comment,
-        "category_unit": data.categoryUnit
-      };
-      String token = await SharedPref().read('token') ?? '';
-      print("RequestDATA: ${jsonData}");
+    const baseUrl = 'https://yuktashish.coded.uz/';
+    final path = Endpoint.preOrder;
+    final fullUrl = baseUrl + path;
+    AppLogger.preorder('preOrder START', detail: 'category_unit=${data.categoryUnit}');
 
-      Response response = await HeaderOptions.dio.post(Endpoint.preOrder,
-          data: json.encode(jsonData),
-          options: Options(
-            headers: {
-              "accept": 'application/json',
-              "Content-Type": "application/json",
-              'Authorization': "Bearer $token"
-            },
-            contentType: Headers.jsonContentType,
-            // contentType: Headers.formUrlEncodedContentType,
-          ) // await HeaderOptions().option(),
-          );
-      print("REquest: ${response.data}");
+    String? requestBody;
+    try {
+      // main_yuk bilan bir xil: address faqat name, long, lat (id yuborilmaydi)
+      final addressMap = <String, dynamic>{
+        "name": data.address.name,
+        "long": data.address.long,
+        "lat": data.address.lat,
+      };
+
+      final jsonData = <String, dynamic>{
+        "address": addressMap,
+        "comment": data.comment,
+        "category_unit": data.categoryUnit,
+        "service_type": data.serviceType,
+      };
+      // Backend "material" uchun entity_type talab qiladi; berilmasa default "individual"
+      jsonData["entity_type"] = (data.entityType != null && data.entityType!.isNotEmpty)
+          ? data.entityType!
+          : "individual";
+      if (data.jshshir != null && data.jshshir!.isNotEmpty) jsonData["jshshir"] = data.jshshir;
+      if (data.stir != null && data.stir!.isNotEmpty) jsonData["stir"] = data.stir;
+      if (data.mfo != null && data.mfo!.isNotEmpty) jsonData["mfo"] = data.mfo;
+
+      requestBody = json.encode(jsonData);
+      if (kDebugMode) {
+        print('PreOrder Request URL: $fullUrl');
+        print('PreOrder Request body: $requestBody');
+      }
+      AppLogger.preorder('preOrder request body', detail: requestBody);
+
+      String token = await SharedPref().read('token') ?? '';
+      Response response = await HeaderOptions.dio.post(
+        path,
+        data: jsonData,
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+          },
+          contentType: Headers.jsonContentType,
+        ),
+      );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return response.data["id"];
+        final rawId = response.data["id"];
+        final id = rawId is int ? rawId : (rawId is num ? rawId.toInt() : null);
+        if (id == null) {
+          AppLogger.preorder('preOrder FAIL', detail: 'id not found in response');
+          throw Exception('Invalid response: PreOrder ID not found');
+        }
+        AppLogger.preorder('preOrder OK', detail: 'id=$id');
+        return id;
       } else {
+        AppLogger.preorder('preOrder FAIL', detail: 'status=${response.statusCode}');
         return [];
       }
     } on DioException catch (e) {
-      print("ERR:${e.message} ${e.response}");
-      print("ERROR:${e.response}");
-
-      final errorMessage = DioExceptions.fromDioError(e).toString();
-
-      throw errorMessage;
+      final statusCode = e.response?.statusCode;
+      final respData = e.response?.data;
+      if (kDebugMode) {
+        print('PreOrder FAILED URL: $fullUrl');
+        print('PreOrder FAILED body: $requestBody');
+        print('PreOrder FAILED response: $statusCode $respData');
+      }
+      AppLogger.preorder('preOrder FAILED', detail: 'status=$statusCode body=$requestBody response=$respData');
+      if (statusCode == 400 && respData != null) {
+        String? detail;
+        if (respData is Map) {
+          detail = respData['detail']?.toString() ?? respData['message']?.toString() ?? respData['error']?.toString();
+          if (detail == null && respData['errors'] is Map) {
+            final errs = (respData['errors'] as Map).entries.map((e) => '${e.key}: ${e.value}').join('; ');
+            if (errs.isNotEmpty) detail = errs;
+          }
+          // Backend { jshshir: ["..."], ... } kabi maydon xabarlarini ham o‘qish
+          if (detail == null || detail.isEmpty) {
+            final parts = <String>[];
+            for (final e in respData.entries) {
+              if (e.key == 'detail' || e.key == 'message' || e.key == 'error') continue;
+              final v = e.value;
+              if (v is List) {
+                parts.add('${e.key}: ${v.map((x) => x.toString()).join(", ")}');
+              } else if (v != null) {
+                parts.add('${e.key}: $v');
+              }
+            }
+            if (parts.isNotEmpty) detail = parts.join('; ');
+          }
+        } else if (respData is String) {
+          detail = respData.length > 300 ? '${respData.substring(0, 300)}...' : respData;
+        }
+        throw detail != null && detail.isNotEmpty ? detail : 'Bad request';
+      }
+      throw DioExceptions.fromDioError(e).toString();
     }
   }
 
