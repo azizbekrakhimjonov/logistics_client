@@ -38,6 +38,12 @@ class DioExceptions implements Exception {
       case DioExceptionType.sendTimeout:
         message = "Send timeout in connection with API server";
         break;
+      case DioExceptionType.connectionError:
+        message = "Connection to API server failed due to internet connection";
+        break;
+      case DioExceptionType.badCertificate:
+        message = "Connection to API server failed due to internet connection";
+        break;
       default:
         message = "Something went wrong - ${dioError.type}";
         break;

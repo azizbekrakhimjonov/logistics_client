@@ -41,6 +41,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with RouteAware {
+  static const String _defaultJshshir = '00000000000000';
+
   final dynamic _controller = Completer<GoogleMapController>();
   final fm.MapController _desktopMapController = fm.MapController();
   Timer? _desktopMoveDebounce;
@@ -490,7 +492,7 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                             : GoogleMap(
                                 myLocationEnabled: true,
                                 zoomControlsEnabled: false,
-                                myLocationButtonEnabled: true,
+                                myLocationButtonEnabled: false,
                                 trafficEnabled: true,
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 60),
@@ -532,18 +534,6 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                     ),
                     leftMenuButton(),
                     mapLocationText(),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 12, bottom: 8),
-                        child: FloatingActionButton(
-                          heroTag: "currentLocationBtn",
-                          mini: true,
-                          onPressed: () => getCurrentLocation(),
-                          child: const Icon(Icons.my_location),
-                        ),
-                      ),
-                    ),
 
                     BlocConsumer<MainBloc, MainState>(
                       listener: (context, state) {
@@ -867,12 +857,8 @@ void clearData() {
           });
         },
         activeIndex: activeIndex,
-        onDone: () async {
+        onDone: () {
           if (activeIndex != null) {
-            final j = await SharedPref().read('jshshir');
-            final jshshir = j is String ? j : null;
-            final hasJshshir = jshshir != null && jshshir.trim().isNotEmpty;
-            // main_yuk kabi: material uchun entityType va jshshir yuboriladi
             var dto = PreOrder(
                 address: Address(
                     id: selectedAddressId,
@@ -882,8 +868,8 @@ void clearData() {
                 comment: "",
                 categoryUnit: activeIndex,
                 serviceType: 'material',
-                entityType: hasJshshir ? 'individual' : null,
-                jshshir: hasJshshir ? jshshir.trim() : null);
+                entityType: 'individual',
+                jshshir: _defaultJshshir);
             print("PREORDER: ${dto.toJson()}");
             _bloc.add(PreOrderEvent(data: dto));
               selectedProduct = null;
@@ -930,11 +916,7 @@ void clearData() {
               activeIndex = null;
               parentState(() {});
         }),
-        onDone: (comment) async {
-          // Backend material uchun entity_type va (individual bo'lsa) jshshir talab qiladi — Account dan o‘qiladi
-          final j = await SharedPref().read('jshshir');
-          final jshshir = j is String ? j : null;
-          final hasJshshir = jshshir != null && jshshir.trim().isNotEmpty;
+        onDone: (comment) {
           var dto = PreOrder(
               address: Address(
                   id: selectedAddressId,
@@ -945,7 +927,7 @@ void clearData() {
               categoryUnit: null,
               serviceType: 'material',
               entityType: 'individual',
-              jshshir: hasJshshir ? jshshir.trim() : null);
+              jshshir: _defaultJshshir);
           print("PREORDER: ${dto.toJson()}");
           _bloc.add(PreOrderEvent(data: dto));
               selectedProduct = null;

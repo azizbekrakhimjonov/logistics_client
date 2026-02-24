@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:logistic/models/user_content.dart';
 // import '../models/user.dart';
@@ -176,42 +178,38 @@ class AuthRepository {
   }
 
   Future<dynamic> updateProfile(
-     String photo, String name,String phoneNumber) async {
-
-    String fileName = photo.split('/').last;
-    // String customer = await SharedPref().read("user")??"";
-
-    
+      String photo, String name, String phoneNumber) async {
     try {
-      FormData formData = FormData.fromMap({
-        "name": name,
-        "pic": photo.isNotEmpty
-            ? await MultipartFile.fromFile(photo, filename: fileName)
-            : "",
-      });
+      final Map<String, dynamic> formMap = {"name": name};
 
+      if (photo.isNotEmpty && photo.trim().isNotEmpty) {
+        final file = File(photo);
+        if (file.existsSync()) {
+          final fileName = photo.split(RegExp(r'[/\\]')).last;
+          if (fileName.isNotEmpty) {
+            formMap["pic"] = await MultipartFile.fromFile(
+              photo,
+              filename: fileName.length > 2 ? fileName : "photo.jpg",
+            );
+          }
+        }
+      }
+
+      final formData = FormData.fromMap(formMap);
       print("formData::::$formData");
 
       Response response = await HeaderOptions.dio.put(
         Endpoint.updateUser + '/$phoneNumber/',
-        queryParameters: {
-          "_method": "PUT",
-        },
+        queryParameters: {"_method": "PUT"},
         data: formData,
         options: await HeaderOptions().option(),
       );
-      //  print("URL:${ Endpoint.sendData + '/$client_id'}");
+
       if (response.statusCode == 200) {
-        // String token = await SharedPref().read("token");
-        // await SharedPref().save("testToken", token);
         print("response:${response.data}");
-      } else {
-        return {};
       }
     } on DioException catch (e) {
-      var errorMessage = DioExceptions.fromDioError(e).toString();
-      
-      throw errorMessage;
+      throw DioExceptions.fromDioError(e).toString();
     }
   }
 }

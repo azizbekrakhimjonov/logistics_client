@@ -161,6 +161,7 @@ class _MainDrawerState extends State<MainDrawer> {
             AssetImages.info,
             () {
               Navigator.of(context).pop();
+              Navigator.pushNamed(context, Routes.help);
             },
           ),
           Spacer(),

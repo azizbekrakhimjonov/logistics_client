@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:logistic/screens/auth/code_entry.dart';
 import 'package:logistic/screens/auth/login_screen.dart';
+import 'package:logistic/screens/help/help_screen.dart';
 import 'package:logistic/screens/languageChange/language_change.dart';
 import 'package:logistic/screens/orders/orders.dart';
 import 'package:logistic/screens/vehicleChoose/vehicleChooseScreen.dart';
@@ -20,6 +21,7 @@ class Routes {
      static const String login = LoginScreen.routeName;
      static const String codeEntry = CodeEntryScreen.routeName;
      static const String account = AccountAppBar.routeName;
+     static const String help = HelpScreen.routeName;
 
   static final routes = <String, WidgetBuilder>{
     login: (context) => LoginScreen(),
@@ -29,6 +31,7 @@ class Routes {
     myOrders: (context) => MyOrdersScreen(),
     vehiclechoose: (context) => VehicleChooseScreen(),
     orderDetail: (context) => const OrderDetailScreen(),
-    account: (context) => AccountAppBar()
+    account: (context) => AccountAppBar(),
+    help: (context) => const HelpScreen(),
   };
 }
