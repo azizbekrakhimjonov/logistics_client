@@ -93,6 +93,7 @@ Future<void> main() async {
           path: 'assets/translations',
           fallbackLocale: const Locale('ru'),
           startLocale: const Locale('ru'),
+          saveLocale: true,
           assetLoader: const CodegenLoader(),
           useOnlyLangCode: true,
           child:

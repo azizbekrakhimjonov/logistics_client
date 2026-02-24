@@ -21,8 +21,12 @@ class ToggleButton extends StatefulWidget {
   final VoidCallback onLeftToggleActive;
   final VoidCallback onRightToggleActive;
 
+  /// true = chap (left) tanlangan, false = o'ng (right) tanlangan
+  final bool initialLeftSelected;
+
   const ToggleButton(
       {Key? key,
+      this.initialLeftSelected = true,
       required this.width,
       required this.height,
       required this.toggleBackgroundColor,
@@ -41,17 +45,16 @@ class ToggleButton extends StatefulWidget {
 }
 
 class _ToggleButtonState extends State<ToggleButton> {
-  double _toggleXAlign = -1;
-
+  late double _toggleXAlign;
   late Color _leftDescriptionColor;
   late Color _rightDescriptionColor;
 
   @override
   void initState() {
     super.initState();
-
-    _leftDescriptionColor = widget.activeTextColor;
-    _rightDescriptionColor = widget.inactiveTextColor;
+    _toggleXAlign = widget.initialLeftSelected ? widget._leftToggleAlign : widget._rightToggleAlign;
+    _leftDescriptionColor = widget.initialLeftSelected ? widget.activeTextColor : widget.inactiveTextColor;
+    _rightDescriptionColor = widget.initialLeftSelected ? widget.inactiveTextColor : widget.activeTextColor;
   }
 
   @override

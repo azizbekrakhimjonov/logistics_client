@@ -32,6 +32,7 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
             Text("Language".tr(), style: regularText.copyWith(color: AppColor.secondaryText)),
             SizedBox(height: 10),
             ToggleButton(
+              initialLeftSelected: context.locale.languageCode != 'uz',
               width: 200.0,
               height: 40.0,
               toggleBackgroundColor: Colors.white,
@@ -42,12 +43,10 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
               leftDescription: 'Русский',
               rightDescription: "O'zbek",
               onLeftToggleActive: () {
-                context.setLocale(Locale("ru"));
-                print('left toggle activated');
+                context.setLocale(const Locale("ru"));
               },
               onRightToggleActive: () {
-                context.setLocale(Locale("uz"));
-                print('right toggle activated');
+                context.setLocale(const Locale("uz"));
               },
             ),
           ],
