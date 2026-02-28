@@ -22,11 +22,15 @@ class OrderDetailScreen extends StatelessWidget {
     return order;
   }
 
+  String _t(BuildContext context, String uz, String ru) {
+    return Services.translate(context.locale.toString(), uz, ru);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Order details'),
+        title: Text(_t(context, "Buyurtma tafsilotlari", "Детали заказа")),
         backgroundColor: AppColor.primary,
       ),
       body: FutureBuilder<ActiveOrder>(
@@ -56,28 +60,28 @@ class OrderDetailScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             children: [
               ListTile(
-                title: const Text('Status'),
+                title: Text(_t(context, "Holat", "Статус")),
                 subtitle: Text(Services.getStatusString(order.status)),
               ),
               const Divider(),
               ListTile(
-                title: const Text('Address'),
+                title: Text(_t(context, "Manzil", "Адрес")),
                 subtitle: Text(order.address),
               ),
               const Divider(),
               ListTile(
-                title: const Text('Category'),
+                title: Text(_t(context, "Kategoriya", "Категория")),
                 subtitle: Text(categoryName),
               ),
               if (quantity.isNotEmpty) const Divider(),
               if (quantity.isNotEmpty)
                 ListTile(
-                  title: const Text('Quantity'),
+                  title: Text(_t(context, "Miqdor", "Количество")),
                   subtitle: Text(quantity),
                 ),
               const Divider(),
               ListTile(
-                title: const Text('Price'),
+                title: Text(_t(context, "Narx", "Цена")),
                 subtitle: Text(Services.moneyFormat(order.price.toString()) ?? ''),
               ),
               const SizedBox(height: 24),
@@ -102,7 +106,7 @@ class OrderDetailScreen extends StatelessWidget {
                 ),
               if (order.paymentUrl == null || order.paymentUrl!.isEmpty)
                 Text(
-                  'No payment link',
+                  _t(context, "To'lov havolasi yo'q", "Нет ссылки на оплату"),
                   style: regularText.copyWith(color: AppColor.secondaryText),
                 ),
             ],

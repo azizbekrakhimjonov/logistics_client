@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logistic/constants/constants.dart';
+import 'package:logistic/utils/services.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:logistic/models/order.dart';
@@ -84,6 +85,14 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
     super.dispose();
   }
 
+  String _translateError(BuildContext context, String message) {
+    final locale = context.locale.toString();
+    if (message.contains("Not found") || message == "Not found.") {
+      return Services.translate(locale, "Topilmadi.", "Не найдено.");
+    }
+    return message;
+  }
+
   getOrder(){
     if (args == null) return;
     _bloc.add(GetOrder(id: args["id"]));
@@ -107,7 +116,11 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
         child: Scaffold(
           appBar: AppBar(
             title: Text(
-              "Buyurtmani qabul qilishga tayyor yuk mashinalar",
+              Services.translate(
+                context.locale.toString(),
+                "Buyurtmani qabul qilishga tayyor yuk mashinalar",
+                "Грузовики, готовые принять заказ",
+              ),
               style: mediumBlack,
               maxLines: 3,
             ),
@@ -132,8 +145,8 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
                   }
                   if (state is OrderDeleteErrorState) {
                     CustomLoadingDialog.hide(context);
-                    Services.showSnackBar(
-                        context, state.message, AppColor.errorRed);
+                    final msg = _translateError(context, state.message);
+                    Services.showSnackBar(context, msg, AppColor.errorRed);
                   }
                   if (state is OrderSuccessState) {
                     setState(() {
@@ -141,8 +154,8 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
                     });
                   }
                   if (state is OrderErrorState) {
-                    Services.showSnackBar(
-                        context, state.message, AppColor.errorRed);
+                    final msg = _translateError(context, state.message);
+                    Services.showSnackBar(context, msg, AppColor.errorRed);
                   }
                 }, builder: (context, state) {
                   if (state is OrderLoadingState) {
@@ -156,12 +169,20 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
                     );
                   }
                   if (orderList.isEmpty) {
+                    final listEmpty = Services.translate(
+                        context.locale.toString(),
+                        "Ro'yxat bo'sh",
+                        "Список пуст");
+                    final refreshLabel = Services.translate(
+                        context.locale.toString(),
+                        "Yangilash",
+                        "Обновить");
                     return Center(
                         child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("List is empty"),
+                        Text(listEmpty),
                         SizedBox(height: 20),
                         FloatingActionButton.extended(
                           backgroundColor: AppColor.primary,
@@ -173,7 +194,7 @@ class _VehicleChooseScreenState extends State<VehicleChooseScreen>
                             color: AppColor.white,
                           ),
                           label: Text(
-                            "Refresh",
+                            refreshLabel,
                             style: mediumBlack.copyWith(color: AppColor.white),
                           )
                         )

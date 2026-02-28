@@ -21,6 +21,49 @@ class _MainDrawerState extends State<MainDrawer> {
   late UserContent? userData;
 
 
+  Widget _buildDrawerName(String fullName) {
+    final trimmed = fullName.trim();
+    if (trimmed.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final parts = trimmed.split(RegExp(r'\s+'));
+    final nameWidget = parts.length >= 2
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                parts.first,
+                style: boldBlack.copyWith(
+                  fontSize: 23,
+                  color: AppColor.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                parts.sublist(1).join(" "),
+                style: boldBlack.copyWith(
+                  fontSize: 23,
+                  color: AppColor.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          )
+        : Text(
+            trimmed,
+            style: boldBlack.copyWith(
+              fontSize: 23,
+              color: AppColor.white,
+            ),
+            textAlign: TextAlign.center,
+          );
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, left: 24, right: 24),
+      child: nameWidget,
+    );
+  }
+
   Widget buildListTile(String title, String icon, Function tapHandler) {
     return ListTile(
       splashColor: AppColor.primary.withOpacity(0.3),
@@ -52,77 +95,59 @@ class _MainDrawerState extends State<MainDrawer> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            height: MediaQuery.of(context).size.height * 0.35,
+            height: MediaQuery.of(context).size.height * 0.38,
             width: double.infinity,
             color: AppColor.primary,
-            // padding: EdgeInsets.all(20),
-            alignment: Alignment.centerLeft,
-            child: Stack(
-              children: <Widget>[
-                SvgPicture.asset(
-                  AssetImages.drawerLayer,
-                  alignment: Alignment.center,
-                  height: MediaQuery.of(context).size.height * 0.33,
-                ),
-                Container(
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 28),
+                child: Center(
                   child: Column(
-                    children: <Widget>[],
-                  ),
-                ),
-                Positioned(
-                  top: 66,
-                  left: 30,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        width:
-                            84, // Adjust the width and height as per your requirement
-                        height: 84,
+                        width: 96,
+                        height: 96,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
+                          color: Colors.white.withOpacity(0.15),
                           border: Border.all(
-                            color: Colors.white,
+                            color: AppColor.white,
                             width: 3.0,
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.12),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: ClipOval(
                           child: CachedNetworkImage(
-                            imageUrl:
-                                userData!.user.picCompress??"",
+                            imageUrl: userData?.user.picCompress ?? "",
+                            fit: BoxFit.cover,
+                            width: 96,
+                            height: 96,
                             progressIndicatorBuilder:
                                 (context, url, downloadProgress) =>
-                                    CupertinoActivityIndicator(),
-                            // CircularProgressIndicator(value: downloadProgress.progress),
+                                    const Center(
+                                        child: CupertinoActivityIndicator(
+                                            color: AppColor.white)),
                             errorWidget: (context, url, error) =>
-                                Image.asset(AssetImages.defaultImage,fit: BoxFit.cover),
-
+                                Image.asset(AssetImages.defaultImage,
+                                    fit: BoxFit.cover, width: 96, height: 96),
                           ),
-                          // Image.network(
-                          //   "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-                          //   fit: BoxFit.cover,
-                          //   errorBuilder: (context, url, error) => Image.asset(
-                          //       AssetImages.defaultImage,
-                          //       height: 84,
-                          //       width: 84,
-                          //       fit: BoxFit.fill),
-                          // ),
                         ),
                       ),
-                      SizedBox(height: 25),
-                      Container(
-                        width: 300,
-                        child: Text(
-                         userData?.user.name ?? "",
-                          style: mediumBlack.copyWith(
-                              fontSize: 23, color: AppColor.white),
-                          maxLines: 2,
-                        ),
-                      )
+                      const SizedBox(height: 24),
+                      _buildDrawerName(userData?.user.name ?? ""),
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
           SizedBox(

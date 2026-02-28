@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logistic/models/payment.dart';
 import 'package:logistic/repositories/services_repository.dart';
 import 'package:logistic/utils/utils.dart';
+import 'package:logistic/utils/services.dart';
 import 'package:logistic/routes.dart';
 import 'package:logistic/utils/navigation_services.dart';
 
@@ -39,6 +39,20 @@ class _PaymentTypeState extends State<PaymentType> {
   bool _isLoading = false;
   final ServicesRepository _repository = ServicesRepository();
   
+  String _translateError(BuildContext context, String message) {
+    final locale = context.locale.toString();
+    if (message.contains("Not found") || message == "Not found.") {
+      return Services.translate(locale, "Topilmadi.", "Не найдено.");
+    }
+    if (message.contains("Connection") || message.contains("internet")) {
+      return Services.translate(
+          locale,
+          "Internetga ulanishni tekshiring.",
+          "Проверьте подключение к интернету.");
+    }
+    return message;
+  }
+
   String _getPaymentTypeString(int id) {
     switch (id) {
       case 1:
@@ -63,7 +77,7 @@ class _PaymentTypeState extends State<PaymentType> {
     
     try {
       String paymentType = _getPaymentTypeString(selectedId);
-      var result = await _repository.createOrder(
+      await _repository.createOrder(
         widget.driverId,
         widget.preorderId,
         paymentType,
@@ -73,8 +87,11 @@ class _PaymentTypeState extends State<PaymentType> {
         _isLoading = false;
       });
       
-      // Show success message and close
-      Services.showSnackBar(context, "Buyurtma muvaffaqiyatli yaratildi", AppColor.primary);
+      final successMsg = Services.translate(
+          context.locale.toString(),
+          "Buyurtma muvaffaqiyatli yaratildi",
+          "Заказ успешно создан");
+      Services.showSnackBar(context, successMsg, AppColor.primary);
       widget.closeSheet();
       
       // Navigate back to main and refresh via RouteObserver in MainScreen
@@ -85,8 +102,8 @@ class _PaymentTypeState extends State<PaymentType> {
         _isLoading = false;
       });
       
-      // Show error message
-      Services.showSnackBar(context, e.toString(), AppColor.errorRed);
+      final errMsg = _translateError(context, e.toString());
+      Services.showSnackBar(context, errMsg, AppColor.errorRed);
     }
   }
 
@@ -142,7 +159,11 @@ class _PaymentTypeState extends State<PaymentType> {
                                 icon: const Icon(Icons.close)),
                           ],
                         ),
-                         Text("Tulov usullari",
+                         Text(
+                            Services.translate(
+                                context.locale.toString(),
+                                "To'lov usullari",
+                                "Способы оплаты"),
                             style: mediumBlack.copyWith(fontSize: 17),
                             textAlign: TextAlign.center),
                         const SizedBox(height: 30),
@@ -153,7 +174,11 @@ class _PaymentTypeState extends State<PaymentType> {
                          children: [
                            Padding(
                              padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 25),
-                             child: Text("Boshqa usullar",
+                             child: Text(
+                                  Services.translate(
+                                      context.locale.toString(),
+                                      "Boshqa usullar",
+                                      "Другие способы"),
                                   style: mediumBlack.copyWith(fontSize: 15),
                                   textAlign: TextAlign.left),
                            ),
@@ -199,7 +224,14 @@ class _PaymentTypeState extends State<PaymentType> {
                 height: 40,
                 width: 100,
                 child: Image.asset(type.image,fit: type.id == 4 ? BoxFit.contain : BoxFit.cover)),
-                type.id == 4 ? Text("Naqd tolov",style: regularText.copyWith(fontSize: 13),) : Container()
+                type.id == 4
+                    ? Text(
+                        Services.translate(
+                            context.locale.toString(),
+                            "Naqd to'lov",
+                            "Наличные"),
+                        style: regularText.copyWith(fontSize: 13))
+                    : const SizedBox.shrink()
             ],
           ),
           IconButton(onPressed: (){

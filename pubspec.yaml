@@ -79,19 +79,29 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   flutter_launcher_icons: ^0.14.4
 
-# App icon konfiguratsiyasi - brand.png dan barcha o'lchamlarda icon yaratiladi
+# App icon — assets/images/logo.png dan barcha o'lchamlarda icon yaratiladi
 flutter_launcher_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/images/brand.png"
-  adaptive_icon_background: "#000000"
-  adaptive_icon_foreground: "assets/images/brand.png"
+  image_path: "assets/images/logo.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/logo.png"
   web:
     generate: true
-    image_path: "assets/images/brand.png"
-    background_color: "#000000"
-    theme_color: "#000000"
+    image_path: "assets/images/logo.png"
+    background_color: "#FFFFFF"
+    theme_color: "#E64A17"
+
+# Splash screen — background.png va logo (2-rasmdagidek)
+flutter_native_splash:
+  background_image: "assets/images/background.png"
+  image: "assets/images/logo_white.png"
+  fullscreen: true
+  android_12:
+    color: "#E64A17"
+    image: "assets/images/logo_white.png"
+    icon_background_color: "#E64A17"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

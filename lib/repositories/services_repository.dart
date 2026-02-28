@@ -260,45 +260,55 @@ class ServicesRepository {
     }
   }
 
+  /// POST api/orders/order-create/ — client tanlagan haydovchi uchun buyurtma yaratadi.
+  /// Body: driver (id), preorder_id, payment_type (payme|uzum|click|cash).
+  /// Backend odatda order ni yaratib status beradi; driver da ko‘rinishi uchun backend
+  /// driver app qaysi statuslarni ko‘rsatishini tekshiring.
   Future<dynamic> createOrder(int driverId, int preorderId, String paymentType) async {
     try {
-      print("createOrder - driverId: $driverId, preorderId: $preorderId, paymentType: $paymentType");
       String token = await SharedPref().read('token') ?? '';
-      
-      var jsonData = {
+      final jsonData = <String, dynamic>{
         "driver": driverId,
         "preorder_id": preorderId,
-        "payment_type": paymentType
+        "payment_type": paymentType,
       };
-      
-      print("RequestDATA: ${json.encode(jsonData)}");
+
+      if (kDebugMode) {
+        print("createOrder POST ${Endpoint.orderCreate}");
+        print("createOrder body: driver=$driverId preorder_id=$preorderId payment_type=$paymentType");
+      }
 
       Response response = await HeaderOptions.dio.post(
         Endpoint.orderCreate,
-        data: json.encode(jsonData),
+        data: jsonData,
         options: Options(
           headers: {
-            "accept": 'application/json',
+            "Accept": "application/json",
             "Content-Type": "application/json",
-            'Authorization': "Bearer $token"
+            "Authorization": "Bearer $token",
           },
           contentType: Headers.jsonContentType,
         ),
       );
 
-      print("Response: ${response.data}");
-      
+      if (kDebugMode && response.data != null) {
+        final res = response.data;
+        print("createOrder response: status=${response.statusCode} data=$res");
+        if (res is Map && res.containsKey("status")) {
+          print("createOrder order status from server: ${res["status"]}");
+        }
+      }
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response.data;
-      } else {
-        throw Exception("Failed to create order");
       }
+      throw Exception("Failed to create order: ${response.statusCode}");
     } on DioException catch (e) {
-      print("ERR:${e.message} ${e.response}");
-      print("ERROR:${e.response}");
-      
-      final errorMessage = DioExceptions.fromDioError(e).toString();
-      throw errorMessage;
+      if (kDebugMode) {
+        print("createOrder DioException: ${e.message}");
+        print("createOrder response: ${e.response?.statusCode} ${e.response?.data}");
+      }
+      throw DioExceptions.fromDioError(e).toString();
     }
   }
 
